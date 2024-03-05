@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "afteryou"
+version = "0.1.0"
+description = ""
+authors = ["antonoko <antonoko@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.31.1"
+pre-commit = "^3.6.2"
+
+[[tool.poetry.source]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+priority = "default"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
