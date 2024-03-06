@@ -1,40 +1,80 @@
+import datetime
+
+import streamlit as st
+
 from afteryou import utils
+
+GLOBAL_HEADER = """
+"""
 
 
 def replace_newlines_with_paragraphs(text: str, id: str):
-    # 分割文本为列表，元素为以 \n 分割的子串
+    """替换\n为<p>"""
     paragraphs = text.split("\n")
-    # 使用 <p> 标签包裹每个子串，并加入新的列表
     paragraphs = ['<p id="{}">{}</p>'.format(id, p) for p in paragraphs if p]
-    # 将列表合并为一个字符串
     result = "".join(paragraphs)
-
     return result
 
 
-def timestamp(ts: int):
+def add_dim_area(dim: bool, add_class=True):
+    if dim:
+        if add_class:
+            return "class='dim_area'"
+        else:
+            return "dim_area"
+
+
+# "%Y-%m-%d_%H-%M-%S"
+def render_title(date: datetime.datetime, level="h2", dim=False):
+    date_str = date.strftime("%m/%d")
+    res = f"""
+<{level} {add_dim_area(dim)}>{date_str}</{level}>
+"""
+    st.markdown(res, unsafe_allow_html=True)
+
+
+def render_timestamp(ts: int, dim=False):
     dt = utils.seconds_to_datetime(ts)
     dt_str = dt.strftime("%H:%M")
     res = f"""
-<p align='left' style='color:rgba(255,255,255,.3)'>{dt_str}</p>
+<p align='left' style='color:rgba(255,255,255,.3)' {add_dim_area(dim)}>{dt_str}</p>
 """
-    return res
+    st.markdown(res, unsafe_allow_html=True)
 
 
-def ai_content(content: str):
+def render_user_content(content: str, dim=False):
     content = replace_newlines_with_paragraphs(content, id="ai-content")
     css = """
 <style>
-.container {
+.container_user_content {
+    padding-bottom:1.5em;
+}
+</style>
+"""
+
+    res = (
+        css
+        + f"""
+<div class="container_user_content container_global {add_dim_area(dim,add_class=False)}">{content}<div>
+"""
+    )
+    st.markdown(res, unsafe_allow_html=True)
+
+
+def render_ai_content(content: str, emoji="🔮", dim=False):
+    content = replace_newlines_with_paragraphs(content, id="ai-content")
+    css = """
+<style>
+.container_ai_content {
     display: flex;
 }
 
-.left {
+.cac_left {
     text-align: center;
     padding-left:1em;
 }
 
-.right {
+.cac_right {
     flex-grow: 1;
     color:#A687FF;
     font-style: italic;
@@ -49,10 +89,17 @@ def ai_content(content: str):
     res = (
         css
         + f"""
-<div class="container">
-  <div class="left">🔮</div>
-  <div class="right">{content}</div>
+<div class="container_ai_content container_global {add_dim_area(dim,add_class=False)}">
+  <div class="cac_left">{emoji}</div>
+  <div class="cac_right">{content}</div>
 </div>
 """
     )
-    return res
+    st.markdown(res, unsafe_allow_html=True)
+
+
+def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoji="🔮", dim=False):
+    render_timestamp(timestamp, dim=dim)
+    render_user_content(user_content, dim=dim)
+    render_ai_content(ai_content, dim=dim)
+    st.divider()

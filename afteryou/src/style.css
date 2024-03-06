@@ -1,0 +1,9 @@
+body * {
+    font-family: 'LXGW WenKai Screen R', sans-serif !important;
+}
+.dim_area{
+    opacity: .5;
+}
+.container_global{
+    padding-right: 2em;
+}

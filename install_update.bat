@@ -13,4 +13,6 @@ python -m poetry install
 
 for /F "usebackq tokens=*" %%A in (`python -m poetry env info --path`) do call %%A\Scripts\activate.bat
 pre-commit install
+
+python "%~dp0\afteryou\update_routine.py"
 pause

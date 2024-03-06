@@ -6,7 +6,7 @@ authors = ["antonoko <antonoko@outlook.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.10,<3.12"
 streamlit = "^1.31.1"
 pre-commit = "^3.6.2"
 
