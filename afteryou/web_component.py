@@ -25,7 +25,7 @@ def add_dim_area(dim: bool, add_class=True):
 
 
 # "%Y-%m-%d_%H-%M-%S"
-def render_title(date: datetime.datetime, level="h2", dim=False):
+def render_title(date: datetime.date, level="h2", dim=False):
     date_str = date.strftime("%m/%d")
     res = f"""
 <{level} {add_dim_area(dim)}>{date_str}</{level}>
