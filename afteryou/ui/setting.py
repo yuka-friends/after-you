@@ -45,10 +45,13 @@ def render():
             df_character,
             height=500,
             column_config={
-                "emoji": st.column_config.TextColumn("emoji", help="Please enter emoji", max_chars=4, width="small"),
+                "emoji": st.column_config.TextColumn("emoji", help="Please enter the emoji only", max_chars=4, width="small"),
                 "enable": st.column_config.CheckboxColumn("enable", help="Enable this character", width="small"),
                 "temperature": st.column_config.NumberColumn(
                     "temperature", help="Creative for this character. Range: 0~1.", min_value=0.0, max_value=1.0, width="small"
+                ),
+                "note": st.column_config.TextColumn(
+                    "note", help="Won't affect the character, just for introduction", width="medium"
                 ),
                 "system_prompt": st.column_config.TextColumn("character setting", help="System prompt for this character"),
             },
