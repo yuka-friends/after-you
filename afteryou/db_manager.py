@@ -38,6 +38,7 @@ class _DBManager:
             self.db_insert_data(
                 user_timestamp=int(datetime.datetime.now().timestamp()),
                 user_note="Welcome to After you. 🥞",
+                ai_character_emoji="🔮",
                 ai_reply_timestamp=int(datetime.datetime.now().timestamp()),
                 ai_reply_content="Hey there, great to meet you. How's your day going?",
                 should_ai_reply=True,
@@ -54,6 +55,7 @@ class _DBManager:
             f"""CREATE TABLE {self.tablename}
                    (user_timestamp INT,
                    user_note TEXT,
+                   ai_character_emoji TEXT,
                    ai_reply_timestamp INT,
                    ai_reply_content TEXT,
                    should_ai_reply BOOLEAN,
@@ -66,6 +68,7 @@ class _DBManager:
         self,
         user_timestamp: int,
         user_note: str,
+        ai_character_emoji: str,
         ai_reply_timestamp: int,
         ai_reply_content: str,
         should_ai_reply: bool,
@@ -77,11 +80,12 @@ class _DBManager:
         c = conn.cursor()
 
         c.execute(
-            f"INSERT INTO {self.tablename} (user_timestamp, user_note, ai_reply_timestamp, ai_reply_content, should_ai_reply, img_filepath) VALUES (?, ?, ?, ?, ?, ?)",
+            f"INSERT INTO {self.tablename} (user_timestamp, user_note, ai_character_emoji, ai_reply_timestamp, ai_reply_content, should_ai_reply, img_filepath) VALUES (?, ?, ?, ?, ?, ?, ?)",
             (
-                user_timestamp,
+                int(user_timestamp),
                 user_note,
-                ai_reply_timestamp,
+                ai_character_emoji,
+                int(user_timestamp),
                 ai_reply_content,
                 should_ai_reply,
                 img_filepath,
@@ -100,11 +104,20 @@ class _DBManager:
         BETWEEN ? AND ?;
         """
         df = pd.read_sql_query(query, conn, params=(start_timestamp, end_timestamp))
-
+        conn.close()
         if df.empty:
             return None
         else:
             return df
+
+    # 根据用户时间戳删除对应行
+    def delete_row_by_timestamp(self, timestamp):
+        conn = sqlite3.connect(self.db_filepath)
+        c = conn.cursor()
+        query = f"DELETE FROM {self.tablename} WHERE user_timestamp = ?"
+        c.execute(query, (timestamp,))
+        conn.commit()
+        conn.close()
 
     # 检查 column_name 列是否存在，若无则新增
     def db_ensure_row_exist(self, column_name, column_type):

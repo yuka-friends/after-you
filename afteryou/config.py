@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 
+from afteryou import file_utils
 from afteryou.logger import get_logger
 
 CONFIG_NAME_USER = "config_user.json"
@@ -17,25 +18,23 @@ logger = get_logger(__name__)
 class Config:
     def __init__(
         self,
+        ui_lang,
         openai_api_key,
         openai_url,
         model_name,
-        character,
-        enable_random_character,
-        character_index,
         weather_location,
         username,
+        system_prompt_prefix,
         **other_field,
     ) -> None:
         # If need to process input parameters, they should assign another variable name to prevent recursive writing into the config.
+        self.ui_lang = ui_lang
         self.openai_api_key = openai_api_key
         self.openai_url = openai_url
         self.model_name = model_name
-        self.character = character
-        self.enable_random_character = enable_random_character
-        self.character_index = character_index
         self.weather_location = weather_location
         self.username = username
+        self.system_prompt_prefix = system_prompt_prefix
 
     def set_and_save_config(self, attr: str, value):
         if not hasattr(self, attr):
@@ -83,6 +82,7 @@ def update_config_files_from_default_to_user():
 
 
 def initialize_config():
+    file_utils.ensure_dir("userdata")
     if not os.path.exists(CONFIG_FILEPATH_USER):
         logger.info("-User config not found, will be created.")
         shutil.copyfile(CONFIG_FILEPATH_DEFAULT, CONFIG_FILEPATH_USER)

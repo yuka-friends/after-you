@@ -3,6 +3,7 @@ import datetime
 import streamlit as st
 
 from afteryou import utils
+from afteryou.db_manager import db_manager
 
 GLOBAL_HEADER = """
 """
@@ -43,11 +44,14 @@ def render_timestamp(ts: int, dim=False):
 
 
 def render_user_content(content: str, dim=False):
-    content = replace_newlines_with_paragraphs(content, id="ai-content")
+    content = replace_newlines_with_paragraphs(content, id="user-content")
     css = """
 <style>
 .container_user_content {
     padding-bottom:1.5em;
+}
+#user-content {
+    font-size:20px;
 }
 </style>
 """
@@ -67,6 +71,7 @@ def render_ai_content(content: str, emoji="🔮", dim=False):
 <style>
 .container_ai_content {
     display: flex;
+    padding-bottom:1em;
 }
 
 .cac_left {
@@ -98,8 +103,21 @@ def render_ai_content(content: str, emoji="🔮", dim=False):
     st.markdown(res, unsafe_allow_html=True)
 
 
-def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoji="🔮", dim=False):
-    render_timestamp(timestamp, dim=dim)
-    render_user_content(user_content, dim=dim)
-    render_ai_content(ai_content, dim=dim)
+def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoji="🔮", dim=False, index="0_0"):
     st.divider()
+    col_edit1, col_edit2, col_edit3, col_edit4 = st.columns([4, 0.3, 0.3, 0.3])
+    with col_edit1:
+        render_timestamp(timestamp, dim=dim)
+    if not dim:
+        with col_edit2:
+            st.button("✍🏻", help="Edit", key=f"btn_edit_{index}", use_container_width=True)
+        with col_edit3:
+            st.button("🔮", help="Re-imagine", key=f"btn_reimagine_{index}", use_container_width=True)
+        with col_edit4:
+            if st.button("🗑️", help="Delete", key=f"btn_delete_{index}", use_container_width=True):
+                db_manager.delete_row_by_timestamp(timestamp=timestamp)
+                st.rerun()
+
+    render_user_content(user_content, dim=dim)
+    if ai_content:
+        render_ai_content(ai_content, dim=dim)

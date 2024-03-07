@@ -60,9 +60,11 @@ def add_thought():
             datetime_user = datetime.datetime.combine(
                 st.session_state.day_date_input, datetime.time(time_now.hour, time_now.minute, time_now.second)
             )
+            ai_emoji = "⛔"
+            ai_reply = None
             if st.session_state.toggle_should_reply:
                 with st.spinner("🔮 水晶球祈愿中……"):
-                    ai_reply = llm.request_llm(text)
+                    ai_reply, ai_emoji = llm.request_llm(text)
                 if ai_reply is None:
                     pass
                 # FIXME retry or fallback
@@ -70,6 +72,7 @@ def add_thought():
             db_manager.db_insert_data(
                 user_timestamp=datetime_user.timestamp(),
                 user_note=text,
+                ai_character_emoji=ai_emoji,
                 ai_reply_timestamp=datetime.datetime.now().timestamp(),
                 ai_reply_content=ai_reply,
                 should_ai_reply=st.session_state.toggle_should_reply,
@@ -88,15 +91,15 @@ def add_thought():
             key="text_area_add_thought",
             on_change=submit_user_input_area,
         )
-        col_submit1, col_submit2, col_submit3, col_submit4 = st.columns([0.5, 1, 2, 1])
+        col_submit1, col_submit2, col_submit3 = st.columns([0.5, 1, 3])
         with col_submit1:
             st.toggle("🔮", key="toggle_should_reply", value=True)
         with col_submit2:
             st.checkbox("Picture")
         with col_submit3:
-            st.empty()
-        with col_submit4:
-            st.empty()
+            st.markdown(
+                "<p align='right' style='color:rgba(255,255,255,.1)'> Ctrl + Enter to submit</p>", unsafe_allow_html=True
+            )
 
         st.empty()
     with col_t3:
@@ -113,7 +116,7 @@ def title_render():
         web_component.render_title(st.session_state.day_date_input + datetime.timedelta(days=1), dim=True)
 
 
-def render_day_data(day_date_input, dim=True):
+def render_day_data(day_date_input, dim=True, column=0):
     res_df = db_manager.db_get_range_by_timestamp(
         start_timestamp=datetime.datetime.combine(day_date_input, datetime.time(0, 0, 1)).timestamp(),
         end_timestamp=datetime.datetime.combine(day_date_input, datetime.time(23, 23, 59)).timestamp(),
@@ -126,4 +129,5 @@ def render_day_data(day_date_input, dim=True):
                 ai_content=row["ai_reply_content"],
                 ai_emoji="🥞",
                 dim=dim,
+                index=str(column) + "_" + str(index),
             )

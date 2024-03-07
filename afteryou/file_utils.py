@@ -154,3 +154,13 @@ def read_txt_as_list(file_path):
     with open(file_path, "r", encoding="utf8") as f:
         content_list = [line.strip() for line in f.readlines()]
     return content_list
+
+
+# 读取角色信息
+def get_character_df():
+    FILEPATH_CHARCTER = "userdata\\character.csv"
+    if not os.path.exists(FILEPATH_CHARCTER):
+        ensure_dir(os.path.dirname(FILEPATH_CHARCTER))
+        shutil.copyfile("afteryou\\src\\character.csv", FILEPATH_CHARCTER)
+
+    return read_dataframe_from_path(FILEPATH_CHARCTER)
