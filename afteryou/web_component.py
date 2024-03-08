@@ -2,7 +2,7 @@ import datetime
 
 import streamlit as st
 
-from afteryou import utils
+from afteryou import llm, utils
 from afteryou.db_manager import db_manager
 
 GLOBAL_HEADER = """
@@ -104,20 +104,47 @@ def render_ai_content(content: str, emoji="🔮", dim=False):
 
 
 def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoji="🔮", dim=False, index="0_0"):
+    def _reimagine():
+        if st.session_state.toggle_should_reply:
+            ai_reply, ai_emoji = llm.request_ai_reply_instant(user_content)
+            db_manager.update_row_by_timestamp(timestamp=timestamp, column_name="ai_character_emoji", update_content=ai_emoji)
+            db_manager.update_row_by_timestamp(timestamp=timestamp, column_name="ai_reply_content", update_content=ai_reply)
+            db_manager.update_row_by_timestamp(
+                timestamp=timestamp, column_name="ai_reply_timestamp", update_content=int(datetime.datetime.now().timestamp())
+            )
+
+    def _update_user_note():
+        db_manager.update_row_by_timestamp(
+            timestamp=timestamp, column_name="user_note", update_content=st.session_state[f"edit_{index}"]
+        )
+        _reimagine()
+
     st.divider()
     col_edit1, col_edit2, col_edit3, col_edit4 = st.columns([4, 0.3, 0.3, 0.3])
     with col_edit1:
         render_timestamp(timestamp, dim=dim)
     if not dim:
         with col_edit2:
-            st.button("✍🏻", help="Edit", key=f"btn_edit_{index}", use_container_width=True)
+            edit_mode = st.button("✍🏻", help="Edit", key=f"btn_edit_{index}", use_container_width=True)
         with col_edit3:
-            st.button("🔮", help="Re-imagine", key=f"btn_reimagine_{index}", use_container_width=True)
+            re_imagine = st.button("🔮", help="Re-imagine", key=f"btn_reimagine_{index}", use_container_width=True)
         with col_edit4:
             if st.button("🗑️", help="Delete", key=f"btn_delete_{index}", use_container_width=True):
                 db_manager.delete_row_by_timestamp(timestamp=timestamp)
                 st.rerun()
+    else:
+        re_imagine = False
+        edit_mode = False
 
-    render_user_content(user_content, dim=dim)
-    if ai_content:
-        render_ai_content(ai_content, dim=dim)
+    if re_imagine:
+        _reimagine()
+        st.rerun()
+
+    if edit_mode:
+        st.session_state[f"update_note_{index}"] = st.text_area(
+            "edit", value=user_content, key=f"edit_{index}", on_change=_update_user_note
+        )
+    else:
+        render_user_content(user_content, dim=dim)
+        if ai_content:
+            render_ai_content(ai_content, emoji=ai_emoji, dim=dim)

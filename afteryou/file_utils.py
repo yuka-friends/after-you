@@ -157,10 +157,10 @@ def read_txt_as_list(file_path):
 
 
 # 读取角色信息
-def get_character_df():
-    FILEPATH_CHARCTER = "userdata\\character.csv"
-    if not os.path.exists(FILEPATH_CHARCTER):
-        ensure_dir(os.path.dirname(FILEPATH_CHARCTER))
-        shutil.copyfile("afteryou\\src\\character.csv", FILEPATH_CHARCTER)
+def get_character_df(filepath):
+    if not os.path.exists(filepath):
+        ensure_dir(os.path.dirname(filepath))
+        src_filepath = os.path.join("afteryou\\src", os.path.basename(filepath))
+        shutil.copyfile(src_filepath, filepath)
 
-    return read_dataframe_from_path(FILEPATH_CHARCTER)
+    return read_dataframe_from_path(filepath)

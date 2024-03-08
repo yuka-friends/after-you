@@ -10,6 +10,7 @@ python = ">=3.10,<3.12"
 streamlit = "^1.31.1"
 pre-commit = "^3.6.2"
 openai = "^1.13.3"
+uform = "^1.1.1"
 
 [[tool.poetry.source]]
 name = "tsinghua"

@@ -4,6 +4,7 @@ import sqlite3
 
 import pandas as pd
 
+from afteryou.config import config
 from afteryou.logger import get_logger
 
 logger = get_logger(__name__)
@@ -11,8 +12,10 @@ logger = get_logger(__name__)
 
 class _DBManager:
     def __init__(self) -> None:
-        self.db_filepath = "userdata\\afteryou.db"
-        self.tablename = "afteryou_journal"
+        self.db_filepath = os.path.join(config.userdata_filepath, "afteryou.db")
+        self.tablename_journal = "afteryou_journal"
+        self.tablename_mail = "afteryou_mail"
+        self.tablename_summary = "afteryou_summary"
         self.db_initialize()
 
     # 初始化数据库：检查、创建、连接入参数据库对象，如果内容为空，则创建表初始化
@@ -29,13 +32,20 @@ class _DBManager:
 
         conn = sqlite3.connect(self.db_filepath)
         c = conn.cursor()
-        c.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.tablename}'")
 
+        c.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.tablename_journal}'")
         if c.fetchone() is None:
-            logger.info("db is empty, writing new table.")
-            self.db_create_table()
-
-            self.db_insert_data(
+            logger.info(f"{self.tablename_journal} is empty, writing new table.")
+            query_journal = f"""CREATE TABLE {self.tablename_journal}
+                   (user_timestamp INT,
+                   user_note TEXT,
+                   ai_character_emoji TEXT,
+                   ai_reply_timestamp INT,
+                   ai_reply_content TEXT,
+                   should_ai_reply BOOLEAN,
+                   img_filepath TEXT);"""
+            self.db_create_table(query=query_journal)
+            self.db_insert_data_to_journal(
                 user_timestamp=int(datetime.datetime.now().timestamp()),
                 user_note="Welcome to After you. 🥞",
                 ai_character_emoji="🔮",
@@ -45,26 +55,49 @@ class _DBManager:
                 img_filepath="",
             )
 
+        c.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.tablename_mail}'")
+        if c.fetchone() is None:
+            logger.info(f"{self.tablename_mail} is empty, writing new table.")
+            query_journal = f"""CREATE TABLE {self.tablename_mail}
+                   (mail_timestamp INT,
+                   mail_from_name TEXT,
+                   mail_content TEXT
+                   mail_type TEXT);"""
+            self.db_create_table(query=query_journal)
+            self.db_insert_data_to_mail(
+                mail_timestamp=int(datetime.datetime.now().timestamp()),
+                mail_from_name="Haru",
+                mail_content="Welcome to mail.",
+                mail_type="system",
+            )
+
+        c.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.tablename_summary}'")
+        if c.fetchone() is None:
+            logger.info(f"{self.tablename_summary} is empty, writing new table.")
+            query_journal = f"""CREATE TABLE {self.tablename_summary}
+                   (summary_date TEXT,
+                   summary_content TEXT,
+                   keywords TEXT);"""
+            self.db_create_table(query=query_journal)
+            self.db_insert_data_to_mail(
+                mail_timestamp=int(datetime.datetime.now().timestamp()),
+                mail_from_name="Haru",
+                mail_content="Welcome to mail.",
+                mail_type="system",
+            )
+
+        conn.close()
         return is_db_exist
 
     # 创建表
-    def db_create_table(self):
+    def db_create_table(self, query):
         logger.info("Making table")
         conn = sqlite3.connect(self.db_filepath)
-        conn.execute(
-            f"""CREATE TABLE {self.tablename}
-                   (user_timestamp INT,
-                   user_note TEXT,
-                   ai_character_emoji TEXT,
-                   ai_reply_timestamp INT,
-                   ai_reply_content TEXT,
-                   should_ai_reply BOOLEAN,
-                   img_filepath TEXT);"""
-        )
+        conn.execute(query)
         conn.close()
 
-    # 插入数据
-    def db_insert_data(
+    # 插入日记数据
+    def db_insert_data_to_journal(
         self,
         user_timestamp: int,
         user_note: str,
@@ -74,13 +107,17 @@ class _DBManager:
         should_ai_reply: bool,
         img_filepath: str,
     ):
-        logger.info("Inserting data")
+        user_note = user_note.replace("'", "''")
+        ai_reply_content = ai_reply_content.replace("'", "''")
 
         conn = sqlite3.connect(self.db_filepath)
         c = conn.cursor()
+        query = f"INSERT INTO {self.tablename_journal} (user_timestamp, user_note, ai_character_emoji, ai_reply_timestamp, ai_reply_content, should_ai_reply, img_filepath) VALUES (?, ?, ?, ?, ?, ?, ?)"
+
+        logger.info(f"Inserting data: {query}")
 
         c.execute(
-            f"INSERT INTO {self.tablename} (user_timestamp, user_note, ai_character_emoji, ai_reply_timestamp, ai_reply_content, should_ai_reply, img_filepath) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            query,
             (
                 int(user_timestamp),
                 user_note,
@@ -94,12 +131,55 @@ class _DBManager:
         conn.commit()
         conn.close()
 
+    # 插入邮件数据
+    def db_insert_data_to_mail(
+        self,
+        mail_timestamp: int,
+        mail_from_name: str,
+        mail_content: str,
+        mail_type: str,
+    ):
+        mail_from_name = mail_from_name.replace("'", "''")
+        mail_content = mail_content.replace("'", "''")
+
+        conn = sqlite3.connect(self.db_filepath)
+        c = conn.cursor()
+        query = (
+            f"INSERT INTO {self.tablename_mail} (mail_timestamp, mail_from_name, mail_content, mail_type) VALUES (?, ?, ?, ?)"
+        )
+
+        logger.info(f"Inserting data: {query}")
+
+        c.execute(
+            query,
+            (int(mail_timestamp), mail_from_name, mail_content, mail_type),
+        )
+        conn.commit()
+        conn.close()
+
+    # 插入总结数据
+    def db_insert_data_to_summary(self, summary_date: datetime.date, summary_content: str, keywords: list):
+        summary_content = summary_content.replace("'", "''")
+
+        conn = sqlite3.connect(self.db_filepath)
+        c = conn.cursor()
+        query = f"INSERT INTO {self.tablename_summary} (summary_date, summary_content, keywords) VALUES (?, ?, ?)"
+
+        logger.info(f"Inserting data: {query}")
+
+        c.execute(
+            query,
+            (summary_date, summary_content, keywords),
+        )
+        conn.commit()
+        conn.close()
+
     # 根据出入时间戳获取时间段数据
     def db_get_range_by_timestamp(self, start_timestamp: int, end_timestamp: int):
         conn = sqlite3.connect(self.db_filepath)
         query = f"""
         SELECT *
-        FROM {self.tablename}
+        FROM {self.tablename_journal}
         WHERE user_timestamp
         BETWEEN ? AND ?;
         """
@@ -114,10 +194,30 @@ class _DBManager:
     def delete_row_by_timestamp(self, timestamp):
         conn = sqlite3.connect(self.db_filepath)
         c = conn.cursor()
-        query = f"DELETE FROM {self.tablename} WHERE user_timestamp = ?"
+        query = f"DELETE FROM {self.tablename_journal} WHERE user_timestamp = ?"
+        logger.info(f"Delete: {query}")
         c.execute(query, (timestamp,))
         conn.commit()
         conn.close()
+
+    # 根据用户时间戳修改对应行
+    def update_row_by_timestamp(self, timestamp, column_name, update_content):
+        if type(update_content) is str:
+            update_content = update_content.replace("'", "''")
+
+        conn = sqlite3.connect(self.db_filepath)
+        c = conn.cursor()
+        query = f"UPDATE {self.tablename_journal} SET {column_name} = ? WHERE user_timestamp = ?"
+        logger.info(f"Modify: {query}")
+        c.execute(query, (update_content, timestamp))
+        conn.commit()
+        conn.close()
+
+    def read_sqlite_table_to_dataframe(self, table_name):
+        conn = sqlite3.connect(self.db_filepath)
+        df = pd.read_sql_query("SELECT * from {}".format(table_name), conn)
+        conn.close()
+        return df
 
     # 检查 column_name 列是否存在，若无则新增
     def db_ensure_row_exist(self, column_name, column_type):
@@ -125,16 +225,16 @@ class _DBManager:
         cursor = conn.cursor()
 
         # 查询表信息
-        cursor.execute(f"PRAGMA table_info({self.tablename});")
+        cursor.execute(f"PRAGMA table_info({self.tablename_journal});")
         table_info = cursor.fetchall()
 
         # 检查新列是否已存在
         if column_name not in [column[1] for column in table_info]:
             # 新列不存在，添加新列
-            cursor.execute(f"ALTER TABLE {self.tablename} ADD COLUMN {column_name} {column_type};")
-            logger.info(f"Column {column_name} added to {self.tablename}.")
+            cursor.execute(f"ALTER TABLE {self.tablename_journal} ADD COLUMN {column_name} {column_type};")
+            logger.info(f"Column {column_name} added to {self.tablename_journal}.")
         else:
-            logger.debug(f"Column {column_name} already exists in {self.tablename}.")
+            logger.debug(f"Column {column_name} already exists in {self.tablename_journal}.")
 
         # 提交更改并关闭连接
         conn.commit()

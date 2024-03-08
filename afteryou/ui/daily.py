@@ -4,6 +4,9 @@ import streamlit as st
 
 from afteryou import llm, web_component
 from afteryou.db_manager import db_manager
+from afteryou.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 def render():
@@ -60,16 +63,10 @@ def add_thought():
             datetime_user = datetime.datetime.combine(
                 st.session_state.day_date_input, datetime.time(time_now.hour, time_now.minute, time_now.second)
             )
-            ai_emoji = "⛔"
-            ai_reply = None
             if st.session_state.toggle_should_reply:
-                with st.spinner("🔮 水晶球祈愿中……"):
-                    ai_reply, ai_emoji = llm.request_llm(text)
-                if ai_reply is None:
-                    pass
-                # FIXME retry or fallback
+                ai_reply, ai_emoji = llm.request_ai_reply_instant(text)
 
-            db_manager.db_insert_data(
+            db_manager.db_insert_data_to_journal(
                 user_timestamp=datetime_user.timestamp(),
                 user_note=text,
                 ai_character_emoji=ai_emoji,
@@ -127,7 +124,7 @@ def render_day_data(day_date_input, dim=True, column=0):
                 timestamp=row["user_timestamp"],
                 user_content=row["user_note"],
                 ai_content=row["ai_reply_content"],
-                ai_emoji="🥞",
+                ai_emoji=row["ai_character_emoji"],
                 dim=dim,
                 index=str(column) + "_" + str(index),
             )

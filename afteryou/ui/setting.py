@@ -2,6 +2,7 @@ import streamlit as st
 
 from afteryou import file_utils, llm
 from afteryou.config import config
+from afteryou.sys_path import FILEPATH_CHARCTER, FILEPATH_CHARCTER_MAIL
 
 
 def render():
@@ -13,7 +14,10 @@ def render():
             input_username = st.text_input("your name", value=config.username)
         with col_us2:
             input_weather_city = st.text_input(
-                "weather city", value=config.weather_location, help="leave blank to disable weather for AI"
+                "weather city",
+                value=config.weather_location,
+                help="not available for now. leave blank to disable weather for AI",
+                disabled=True,
             )
 
         st.divider()
@@ -25,7 +29,9 @@ def render():
         input_model_name = st.text_input("model name", value=config.model_name)
         if st.button("Test API"):
             with st.spinner("testing"):
-                res, emoji = llm.request_llm("hi", api_key=input_api_key, base_url=input_api_url, model=input_model_name)
+                res, emoji = llm.request_ai_reply_instant(
+                    "hi", api_key=input_api_key, base_url=input_api_url, model=input_model_name
+                )
             if res is None:
                 st.error("⛔ test failed. Please check cache\\log for more details.")
             else:
@@ -33,19 +39,26 @@ def render():
 
         st.divider()
         st.markdown("### General")
-        input_ui_lang = st.selectbox("lang", ["sc", "en"])
+        input_reply_language = st.selectbox("Reply language", ["Simple Chinese", "English"])
 
         st.divider()
 
     with col2:
         st.markdown("### Crystal")
-        FILEPATH_CHARCTER = "userdata\\character.csv"
-        df_character = file_utils.get_character_df()
+        st.markdown(
+            """
+Each AI reply will be randomly choosed from the following character description. At least one character needs to be enabled.
+"""
+        )
+        st.markdown("##### Instant reply")
+        df_character = file_utils.get_character_df(FILEPATH_CHARCTER)
         df_character_editor = st.data_editor(
             df_character,
-            height=500,
+            height=240,
             column_config={
-                "emoji": st.column_config.TextColumn("emoji", help="Please enter the emoji only", max_chars=4, width="small"),
+                "emoji": st.column_config.TextColumn(
+                    "emoji", help="Please enter the emoji only to represent the character", max_chars=4, width="small"
+                ),
                 "enable": st.column_config.CheckboxColumn("enable", help="Enable this character", width="small"),
                 "temperature": st.column_config.NumberColumn(
                     "temperature", help="Creative for this character. Range: 0~1.", min_value=0.0, max_value=1.0, width="small"
@@ -59,12 +72,40 @@ def render():
             use_container_width=True,
             num_rows="dynamic",
         )
+
+        st.markdown("##### Mail reply")
+        df_character_mail = file_utils.get_character_df(FILEPATH_CHARCTER_MAIL)
+        df_character_mail_editor = st.data_editor(
+            df_character_mail,
+            height=240,
+            column_config={
+                "emoji": st.column_config.TextColumn(
+                    "emoji", help="Please enter the emoji only to represent the character", max_chars=4, width="small"
+                ),
+                "enable": st.column_config.CheckboxColumn("enable", help="Enable this character", width="small"),
+                "temperature": st.column_config.NumberColumn(
+                    "temperature", help="Creative for this character. Range: 0~1.", min_value=0.0, max_value=1.0, width="small"
+                ),
+                "note": st.column_config.TextColumn(
+                    "note", help="Won't affect the character, just for introduction", width="medium"
+                ),
+                "system_prompt": st.column_config.TextColumn("character setting", help="System prompt for this character"),
+            },
+            hide_index=True,
+            use_container_width=True,
+            num_rows="dynamic",
+        )
+
         if st.button("Save character sheet", type="secondary"):
             df_character_editor.dropna(how="all")
-            if not all_rows_filled(df_character_editor):
+            df_character_mail_editor.dropna(how="all")
+            if not all_rows_filled(df_character_editor) or not all_rows_filled(df_character_mail_editor):
                 st.error("Please fill all rows.")
+            elif not check_at_least_one_enable(df_character_editor) or not check_at_least_one_enable(df_character_mail_editor):
+                st.error("Please enable at least one character.")
             else:
                 file_utils.save_dataframe_to_path(df_character_editor, FILEPATH_CHARCTER)
+                file_utils.save_dataframe_to_path(df_character_mail_editor, FILEPATH_CHARCTER_MAIL)
                 st.success("🔮 saved.")
 
     with col3:
@@ -77,9 +118,16 @@ def render():
         config.set_and_save_config("openai_url", input_api_url)
         config.set_and_save_config("openai_api_key", input_api_key)
         config.set_and_save_config("model_name", input_model_name)
-        config.set_and_save_config("ui_lang", input_ui_lang)
-        st.toast("🔮 saved.")
+        config.set_and_save_config("reply_language", input_reply_language)
+        st.success("🔮 saved.")
 
 
 def all_rows_filled(df):
     return df.dropna().shape[0] == df.shape[0]
+
+
+def check_at_least_one_enable(df):
+    if "enable" in df.columns:
+        return df["enable"].any()
+    else:
+        return False

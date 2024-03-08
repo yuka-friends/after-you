@@ -1,11 +1,13 @@
 {
-    "ui_lang": "sc",
+    "userdata_filepath": "userdata",
+    "reply_language": "Simple Chinese",
     "openai_api_key": "",
     "openai_url": "https://api.groq.com/openai/v1",
     "model_name": "mixtral-8x7b-32768",
-    "system_prompt_prefix": "当前时间：{datetime}，天气为：{weather}。你回复的内容可能需要要考虑 当前时间或天气，但不要直接输出当前时间或天气信息。",
-    "enable_random_character": false,
-    "character_index": 0,
+    "system_prompt_prefix": "当前时间：{datetime}，天气为：{weather}。你回复的内容可能需要要考虑 当前时间或天气，但不要直接输出当前时间或天气信息。请根据收到{user_name}的生活日记片段或灵感备忘进行回复。请称呼我的名字为：{user_name}。",
+    "system_prompt_suffix": "以下为{user_name}的日记片段。",
+    "system_prompt_mail_prefix": "本周时间范围：{datetime_start} ~ {datetime_end}，你回复的内容可能需要要考虑当前时间。请根据收到{user_name}的本周日记总结进行回复。请称呼我的名字为：{user_name}。",
+    "system_prompt_mail_suffix": "以下为{user_name}的本周日记总结。",
     "weather_location": "ShangHai",
     "username": "小朋友"
 }
