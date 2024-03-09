@@ -97,7 +97,7 @@ def add_thought():
         with col_submit1:
             st.toggle("🔮", key="toggle_should_reply", value=True)
         with col_submit2:
-            st.checkbox("Picture")
+            st.checkbox("Picture", disabled=True, help="Under development, please stay tuned")
         with col_submit3:
             st.markdown(
                 "<p align='right' style='color:rgba(255,255,255,.1)'> Ctrl + Enter to submit</p>", unsafe_allow_html=True

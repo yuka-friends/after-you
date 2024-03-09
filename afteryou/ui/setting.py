@@ -16,7 +16,7 @@ def render():
             input_weather_city = st.text_input(
                 "weather city",
                 value=config.weather_location,
-                help="not available for now.",
+                help="Under development, please stay tuned.",
                 disabled=True,
             )
 
