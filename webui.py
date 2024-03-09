@@ -66,6 +66,7 @@ def main():
 
             tray_is_running = utils.is_process_running(check_pid, compare_process_name="python.exe")
             if tray_is_running:
+                print("    another After you is running.")
                 interrupt_start()
             else:
                 try:
