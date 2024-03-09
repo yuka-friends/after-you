@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "afteryou"
-version = "0.1.0"
-description = ""
+version = "0.0.1"
+description = "Your proactive AI diary, recording moods and musings, responding to your heart's call"
 authors = ["antonoko <antonoko@outlook.com>"]
 readme = "README.md"
 

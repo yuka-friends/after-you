@@ -1,6 +1,8 @@
+from pathlib import Path
+
 import streamlit as st
 
-from afteryou import file_utils, llm
+from afteryou import __version__, file_utils, llm
 from afteryou.config import config
 from afteryou.sys_path import FILEPATH_CHARCTER, FILEPATH_CHARCTER_MAIL
 
@@ -110,6 +112,20 @@ Each AI reply will be randomly choosed from the following character description.
 
     with col3:
         st.empty()
+        if "is_new_version" not in st.session_state:
+            update_info = "update to date"
+        else:
+            if st.session_state.is_new_version:
+                update_info = " ✨ new version available! Exit and open `install_update.bat` to update."
+        about_markdown = (
+            Path("afteryou\\src\\about_en.md")
+            .read_text(encoding="utf-8")
+            .format(
+                version=__version__,
+                update_info=update_info,
+            )
+        )
+        st.markdown(about_markdown, unsafe_allow_html=True)
 
     if st.button("Save and apply settings", type="primary"):
         input_api_type

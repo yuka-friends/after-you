@@ -68,3 +68,16 @@ def is_process_running(pid, compare_process_name):
         return process.is_running() and process.name() == compare_process_name
     except psutil.NoSuchProcess:
         return False
+
+
+def greeting_based_on_time():
+    current_hour = datetime.datetime.now().hour
+
+    if 5 <= current_hour < 12:  # 5:00 - 11:59 is morning
+        return "Good morning"
+    elif 12 <= current_hour < 17:  # 12:00 - 16:59 is afternoon
+        return "Good afternoon"
+    elif 17 <= current_hour < 22:  # 17:00 - 21:59 is evening
+        return "Good evening"
+    else:  # 22:00 - 4:59 is night
+        return "Good night"

@@ -4,6 +4,7 @@ import sys
 import streamlit as st
 
 from afteryou import embed_manager, routine, utils
+from afteryou.config import config
 from afteryou.exceptions import LockExistsException  # NOQA: E402
 from afteryou.lock import FileLock  # NOQA: E402
 from afteryou.sys_path import TRAY_LOCK_PATH
@@ -31,7 +32,10 @@ else:
 
 
 def render():
-    st.markdown("##### 🧡 After you")
+    if not config.openai_api_key:
+        st.warning("It seems that the LLM api key is not setting, go to the settings set to setup.", icon="👋🏻")
+
+    st.markdown(f"##### 🧡 {utils.greeting_based_on_time()}, {config.username}")
 
     tab_daily, tab_mailbox, tab_search, tab_setting = st.tabs(["daily", "mailbox", "search", "setting" + update_tip])
     with tab_daily:
