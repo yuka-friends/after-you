@@ -46,15 +46,13 @@ def request_llm(
             temperature=temperature,
         )
     except Exception as e:
-        print(e)
+        logger.error(e)
         return "System: Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again.", "⛔"
 
     return completion.choices[0].message.content, emoji
 
 
 def request_ai_reply_instant(text: str, api_key=config.openai_api_key, base_url=config.openai_url, model=config.model_name):
-    ai_emoji = "😢"
-    ai_reply = "System: Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again."
     character_dict = get_random_character(FILEPATH_CHARCTER)
     system_prompt = str(
         config.system_prompt_prefix
@@ -77,7 +75,7 @@ def request_ai_reply_instant(text: str, api_key=config.openai_api_key, base_url=
             base_url=base_url,
             model=model,
         )
-    return ai_reply, ai_emoji
+        return ai_reply, ai_emoji
 
 
 def request_ai_summary(day: datetime.date):
