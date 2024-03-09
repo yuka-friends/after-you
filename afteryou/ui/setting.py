@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 import streamlit as st
@@ -112,9 +113,8 @@ Each AI reply will be randomly choosed from the following character description.
 
     with col3:
         st.empty()
-        if "is_new_version" not in st.session_state:
-            update_info = "update to date"
-        else:
+        update_info = "update to date"
+        if "is_new_version" in st.session_state:
             if st.session_state.is_new_version:
                 update_info = " ✨ new version available! Exit and open `install_update.bat` to update."
         about_markdown = (
@@ -136,6 +136,8 @@ Each AI reply will be randomly choosed from the following character description.
         config.set_and_save_config("model_name", input_model_name)
         config.set_and_save_config("reply_language", input_reply_language)
         st.success("🔮 saved.")
+        time.sleep(1)
+        st.rerun()
 
 
 def all_rows_filled(df):

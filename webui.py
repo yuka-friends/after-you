@@ -24,9 +24,8 @@ if "embedding_model" not in st.session_state:
     with st.spinner("🔮 loading embedding model, please stand by..."):
         st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
 
-if "is_new_version" not in st.session_state:
-    update_tip = ""
-else:
+update_tip = ""
+if "is_new_version" in st.session_state:
     if st.session_state.is_new_version:
         update_tip = " ✨ new version available!"
 
@@ -75,8 +74,13 @@ def main():
                     pass
 
     with tray_lock:
+        if "routine_run_before" not in st.session_state:
+            st.session_state.routine_run_before = True
+            routine.run_before()
         render()
-        routine.run_before()
+        if "routine_run_after" not in st.session_state:
+            st.session_state.routine_run_after = True
+            routine.run_after()
 
 
 main()

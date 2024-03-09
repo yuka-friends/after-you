@@ -8,6 +8,9 @@ from lunardate import LunarDate
 
 from afteryou import llm, utils
 from afteryou.db_manager import db_manager
+from afteryou.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 def run_before():
@@ -63,6 +66,7 @@ def get_mail():
         festival_res = get_special_day(date)
         if festival_res:
             date_to_check = pd.to_datetime(festival_res[0][0]).date()
+            logger.debug(date_to_check)
             if not any(df["mail_datetime"].dt.date.isin([date_to_check])):  # 是否已有信件
                 llm.request_mail_by_festival(special_date=festival_res)
                 st.toast("📮📨 You got new letter!")
