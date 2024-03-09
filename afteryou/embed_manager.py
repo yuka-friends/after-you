@@ -167,6 +167,11 @@ def embed_journal_to_vdb(model, user_timestamp, user_note, ai_reply_content):
     """
     流程：将日记片段 embed 到 vdb
     """
+    if user_note is None:
+        user_note = ""
+    if ai_reply_content is None:
+        ai_reply_content = ""
+
     text_combine = user_note + "\nreply:" + ai_reply_content
     text_embedding = embed_text(text_combine, model=model, detach_numpy=False)
     vdb = VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL))

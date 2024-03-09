@@ -47,14 +47,14 @@ def request_llm(
         )
     except Exception as e:
         print(e)
-        return None, "⛔"
+        return "System: Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again.", "⛔"
 
     return completion.choices[0].message.content, emoji
 
 
 def request_ai_reply_instant(text: str, api_key=config.openai_api_key, base_url=config.openai_url, model=config.model_name):
     ai_emoji = "😢"
-    ai_reply = "Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again."
+    ai_reply = "System: Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again."
     character_dict = get_random_character(FILEPATH_CHARCTER)
     system_prompt = str(
         config.system_prompt_prefix

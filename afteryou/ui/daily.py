@@ -64,6 +64,8 @@ def add_thought():
             )
             if st.session_state.toggle_should_reply:
                 ai_reply, ai_emoji = llm.request_ai_reply_instant(text)
+            else:
+                ai_reply, ai_emoji = "", "⛔️"
 
             db_manager.db_insert_data_to_journal(
                 user_timestamp=datetime_user.timestamp(),
@@ -120,6 +122,8 @@ def title_render():
 
 def render_summary_data(input_date, dim=True):
     summary_content_df = db_manager.db_get_summary_line_by_date(input_date=input_date)
+    if input_date == datetime.date.today():
+        return
     if len(summary_content_df) > 0:
         summary_content = summary_content_df.iloc[0]["summary_content"]
     else:
