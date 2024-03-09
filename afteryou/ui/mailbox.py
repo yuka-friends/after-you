@@ -13,10 +13,10 @@ def render():
         st.session_state["mail_df"] = df.sort_index(ascending=False).reset_index(drop=True)
 
     st.markdown("### 📮 Mailbox")
-    col1, col2 = st.columns([1, 2])
+    col1, col_n, col2 = st.columns([1, 0.3, 2])
     with col1:
         if len(st.session_state.mail_df) - 1 > 0:
-            mail_select = st.slider("select mail", value=0, min_value=0, max_value=len(st.session_state.mail_df) - 1)
+            mail_select = st.slider("slide to select mail", value=0, min_value=0, max_value=len(st.session_state.mail_df) - 1)
         else:
             mail_select = 0
         st.dataframe(
@@ -31,6 +31,8 @@ def render():
                 "mail_content": st.column_config.TextColumn("content", width="large"),
             },
         )
+        st.empty()
+    with col_n:
         st.empty()
     with col2:
         render_letter(

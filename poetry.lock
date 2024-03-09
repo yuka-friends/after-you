@@ -1087,6 +1087,22 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "lunardate"
+version = "0.2.2"
+description = "A Chinese Calendar Library in Pure Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "lunardate-0.2.2-py3-none-any.whl", hash = "sha256:cf1916337e50470a82df12d885ff47a456e89c91a3ad4e5fdf1575e063a7ed55"},
+    {file = "lunardate-0.2.2.tar.gz", hash = "sha256:8ff8c01721bef7710f0712a302b1cb7d0b8b3ffc72a63a9a056cd01e58e5485a"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -3712,4 +3728,4 @@ reference = "tsinghua"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "3dc7e6470ebc7641a51a2620e9f65593fc685e048090aa9c75e0c9e17fe0241f"
+content-hash = "7b8c5f234974dd577f99bc9c285536b87cfbf497141ef5eaae293856133a178e"

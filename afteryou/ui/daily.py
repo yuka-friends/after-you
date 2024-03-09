@@ -24,16 +24,12 @@ def render():
     # FIXME 懒加载
     with col1:
         st.empty()
-        render_summary_data(st.session_state.day_date_input - datetime.timedelta(days=1))
         render_day_data(st.session_state.day_date_input - datetime.timedelta(days=1))
     with col2:
         st.empty()
-        render_summary_data(st.session_state.day_date_input, dim=False)
         render_day_data(st.session_state.day_date_input, dim=False)
-
     with col3:
         st.empty()
-        render_summary_data(st.session_state.day_date_input + datetime.timedelta(days=1))
         render_day_data(st.session_state.day_date_input + datetime.timedelta(days=1))
 
 
@@ -132,11 +128,12 @@ def render_summary_data(input_date, dim=True):
 
 
 def render_day_data(day_date_input, dim=True, column=0):
-    res_df = db_manager.db_get_range_by_timestamp_in_table_journal(
+    res_df = db_manager.db_get_df_range_by_timestamp_in_table_journal(
         start_timestamp=datetime.datetime.combine(day_date_input, datetime.time(0, 0, 1)).timestamp(),
         end_timestamp=datetime.datetime.combine(day_date_input, datetime.time(23, 23, 59)).timestamp(),
     )
     if res_df is not None:
+        render_summary_data(day_date_input, dim=dim)
         for index, row in res_df[::-1].iterrows():
             web_component.render_paragraph(
                 timestamp=row["user_timestamp"],

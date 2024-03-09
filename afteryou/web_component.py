@@ -27,7 +27,7 @@ def add_dim_area(dim: bool, add_class=True):
 
 # "%Y-%m-%d_%H-%M-%S"
 def render_title(date: datetime.date, level="h2", dim=False):
-    date_str = date.strftime("%m/%d")
+    date_str = "{}/{}".format(date.month, date.day) + " " + utils.get_weekday_str(date)
     res = f"""
 <{level} {add_dim_area(dim)}>{date_str}</{level}>
 """
@@ -112,8 +112,7 @@ def render_summary_content(content: str, dim=False):
     line-height: 175%;
     font-size: 14px ;
     padding-bottom:1em;
-    color: rgba(166,135,255,.8)
-
+    color: rgba(166,135,255,.8);
 }
 </style>
 """
@@ -184,11 +183,11 @@ def render_summary(day: datetime.date, summary_content: str, dim=False, editable
     if day > datetime.date.today() or no_render:
         return
 
-    st.divider()
     col_edit1, col_edit2 = st.columns([4.6, 0.3])
     with col_edit1:
         st.markdown(
-            f"<p align='left' style='color:rgba(255,255,255,.3)' {add_dim_area(dim)}>Summary</p>", unsafe_allow_html=True
+            f"<p align='left' style='color:rgba(255,255,255,.3);padding-top:.5em' {add_dim_area(dim)}>Summary</p>",
+            unsafe_allow_html=True,
         )
     if not dim or editable:
         with col_edit2:
@@ -203,4 +202,4 @@ def render_summary(day: datetime.date, summary_content: str, dim=False, editable
     if summary_content:
         render_summary_content(summary_content, dim=dim)
     else:
-        render_summary_content("click Re-imagine to summarize.", dim=dim)
+        render_summary_content("click Re-imagine to summarize. ↗", dim=dim)

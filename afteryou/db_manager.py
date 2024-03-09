@@ -190,7 +190,7 @@ I wish you a happy and safe emotional and recording experience <3
         conn.close()
 
     # 根据出入时间戳获取日记时间段数据
-    def db_get_range_by_timestamp_in_table_journal(self, start_timestamp: int, end_timestamp: int):
+    def db_get_df_range_by_timestamp_in_table_journal(self, start_timestamp: int, end_timestamp: int):
         conn = sqlite3.connect(self.db_filepath)
         query = f"""
         SELECT *
@@ -269,6 +269,8 @@ I wish you a happy and safe emotional and recording experience <3
 
     def db_search_data_journal(self, keywords, exclude_words, start_timestamp, end_timestamp):
         """搜索日记数据"""
+        keywords = keywords.replace("'", "''")
+        exclude_words = exclude_words.replace("'", "''")
         keyword_list = keywords.split(" ")
         exclude_list = exclude_words.split(" ")
 
@@ -298,6 +300,15 @@ I wish you a happy and safe emotional and recording experience <3
         conn.close()
 
         return df
+
+    def db_get_jounal_df_by_day(self, input_date: datetime.date):
+        """根据日期获取日记数据"""
+        start_timestamp = int(datetime.datetime.combine(input_date, datetime.time(0, 0, 1)).timestamp())
+        end_timestamp = int(datetime.datetime.combine(input_date, datetime.time(23, 23, 59)).timestamp())
+        df_day = self.db_get_df_range_by_timestamp_in_table_journal(
+            start_timestamp=start_timestamp, end_timestamp=end_timestamp
+        )
+        return df_day
 
     def db_get_rowid_and_similar_tuple_list_rows(self, rowid_probs_list):
         """

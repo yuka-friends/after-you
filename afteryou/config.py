@@ -31,6 +31,7 @@ class Config:
         embed_search_recall_result_per_db,
         system_prompt_summary,
         max_token_summary_input,
+        system_prompt_mail_special_day_prefix,
         **other_field,
     ) -> None:
         # If need to process input parameters, they should assign another variable name to prevent recursive writing into the config.
@@ -48,6 +49,7 @@ class Config:
         self.embed_search_recall_result_per_db = embed_search_recall_result_per_db
         self.system_prompt_summary = system_prompt_summary
         self.max_token_summary_input = max_token_summary_input
+        self.system_prompt_mail_special_day_prefix = system_prompt_mail_special_day_prefix
 
     def set_and_save_config(self, attr: str, value):
         if not hasattr(self, attr):

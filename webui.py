@@ -15,11 +15,17 @@ if "embedding_model" not in st.session_state:
     with st.spinner("🔮 loading embedding model, please stand by..."):
         st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
 
+if "is_new_version" not in st.session_state:
+    update_tip = ""
+else:
+    if st.session_state.is_new_version:
+        update_tip = " ✨ new version available!"
+
 
 def render():
     st.markdown("##### 🧡 After you")
 
-    tab_daily, tab_mailbox, tab_search, tab_setting = st.tabs(["daily", "mailbox", "search", "setting"])
+    tab_daily, tab_mailbox, tab_search, tab_setting = st.tabs(["daily", "mailbox", "search", "setting" + update_tip])
     with tab_daily:
         daily.render()
 
@@ -33,5 +39,6 @@ def render():
         setting.render()
 
 
-routine.run_before()
 render()
+
+routine.run_before()
