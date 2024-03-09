@@ -3,8 +3,8 @@ title installing dependence and updating
 
 cd /d %~dp0
 
-@REM echo -git: updating repository
-@REM git pull
+echo -git: updating repository
+git pull
 
 echo -updating dependencies
 python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple poetry
