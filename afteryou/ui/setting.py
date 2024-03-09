@@ -8,7 +8,7 @@ from afteryou.sys_path import FILEPATH_CHARCTER, FILEPATH_CHARCTER_MAIL
 def render():
     col1, col2, col3 = st.columns([1, 1.5, 0.5])
     with col1:
-        st.markdown("### About you")
+        st.markdown("### 😉 About you")
         col_us1, col_us2 = st.columns([1, 1])
         with col_us1:
             input_username = st.text_input("your name", value=config.username)
@@ -16,13 +16,13 @@ def render():
             input_weather_city = st.text_input(
                 "weather city",
                 value=config.weather_location,
-                help="not available for now. leave blank to disable weather for AI",
+                help="not available for now.",
                 disabled=True,
             )
 
         st.divider()
 
-        st.markdown("### AI service")
+        st.markdown("### ✨ AI service")
         input_api_type = st.selectbox("LLM API", ["OpenAI compatible"])
         input_api_url = st.text_input("API url", value=config.openai_url)
         input_api_key = st.text_input("API key", value=config.openai_api_key)
@@ -38,13 +38,13 @@ def render():
                 st.markdown(f"`{emoji}: {res}`")
 
         st.divider()
-        st.markdown("### General")
-        input_reply_language = st.selectbox("Reply language", ["Simple Chinese", "English"])
+        st.markdown("### 🛠️ General")
+        input_reply_language = st.selectbox("Reply language", ["Simple Chinese (简体中文)", "English"])
 
         st.divider()
 
     with col2:
-        st.markdown("### Crystal")
+        st.markdown("### 🔮 Crystal")
         st.markdown(
             """
 Each AI reply will be randomly choosed from the following character description. At least one character needs to be enabled.

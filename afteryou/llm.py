@@ -5,6 +5,7 @@ from openai import OpenAI
 
 from afteryou import file_utils
 from afteryou.config import config
+from afteryou.db_manager import db_manager
 from afteryou.logger import get_logger
 from afteryou.sys_path import FILEPATH_CHARCTER, FILEPATH_CHARCTER_MAIL
 
@@ -52,8 +53,8 @@ def request_llm(
 
 
 def request_ai_reply_instant(text: str, api_key=config.openai_api_key, base_url=config.openai_url, model=config.model_name):
-    ai_emoji = "⛔"
-    ai_reply = None
+    ai_emoji = "😢"
+    ai_reply = "Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again."
     character_dict = get_random_character(FILEPATH_CHARCTER)
     system_prompt = str(
         config.system_prompt_prefix
@@ -112,3 +113,42 @@ def request_ai_reply_mail(
             model=model,
         )
     return ai_reply, ai_emoji
+
+
+def request_ai_summary(day: datetime.date):
+    """总结一天"""
+    start_timestamp = int(datetime.datetime.combine(day, datetime.time(0, 0, 1)).timestamp())
+    end_timestamp = int(datetime.datetime.combine(day, datetime.time(23, 23, 59)).timestamp())
+    df = db_manager.db_get_range_by_timestamp_in_table_journal(start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+    text = []
+    for index, row in df.iterrows():
+        text.append(row["user_note"])
+    text_to_summary = "\n".join(text)
+    with st.spinner("🔮 praying to crystal ball ..."):
+        text_ai_summary, _ = request_llm(
+            user_content=text_to_summary,
+            system_prompt=config.system_prompt_summary,
+            temperature=0.3,
+            emoji="✍",
+        )
+        if text_ai_summary:
+            db_manager.db_insert_data_to_summary(summary_date=day, summary_content=text_ai_summary, keywords=[])
+
+
+def request_mail_by_day_range(date_start: datetime.date, date_end: datetime.date):
+    """根据时间范围总结"""
+    # 拉取db summary table数据，检查是否每天齐全
+    # 不齐全的天就检查当天是否有数据，有则总结补齐
+    # 用所有数据进入mail总结撰写
+    days = date_end - date_start
+    text = []
+    for i in days.days:
+        date_query = date_start + datetime.timedelta(days=i)
+        row = db_manager.db_get_summary_line_by_date(input_date=date_query)
+        if len(row) == 0:
+            #
+            pass
+        else:
+            text.append(row["summary_content"])
+
+    pass

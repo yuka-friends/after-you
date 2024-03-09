@@ -28,6 +28,9 @@ class Config:
         system_prompt_mail_prefix,
         system_prompt_mail_suffix,
         userdata_filepath,
+        embed_search_recall_result_per_db,
+        system_prompt_summary,
+        max_token_summary_input,
         **other_field,
     ) -> None:
         # If need to process input parameters, they should assign another variable name to prevent recursive writing into the config.
@@ -42,6 +45,9 @@ class Config:
         self.system_prompt_suffix = system_prompt_suffix
         self.system_prompt_mail_prefix = system_prompt_mail_prefix
         self.system_prompt_mail_suffix = system_prompt_mail_suffix
+        self.embed_search_recall_result_per_db = embed_search_recall_result_per_db
+        self.system_prompt_summary = system_prompt_summary
+        self.max_token_summary_input = max_token_summary_input
 
     def set_and_save_config(self, attr: str, value):
         if not hasattr(self, attr):

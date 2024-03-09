@@ -2,7 +2,7 @@ import datetime
 
 import streamlit as st
 
-from afteryou import llm, utils
+from afteryou import embed_manager, llm, utils
 from afteryou.db_manager import db_manager
 
 GLOBAL_HEADER = """
@@ -103,7 +103,32 @@ def render_ai_content(content: str, emoji="🔮", dim=False):
     st.markdown(res, unsafe_allow_html=True)
 
 
-def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoji="🔮", dim=False, index="0_0"):
+def render_summary_content(content: str, dim=False):
+    content = replace_newlines_with_paragraphs(content, id="")
+    css = """
+<style>
+.container_summary_content {
+    font-style: italic;
+    line-height: 175%;
+    font-size: 14px ;
+    padding-bottom:1em;
+    color: rgba(166,135,255,.8)
+
+}
+</style>
+"""
+    res = (
+        css
+        + f"""
+<div class="container_summary_content container_global {add_dim_area(dim,add_class=False)}">
+{content}
+</div>
+"""
+    )
+    st.markdown(res, unsafe_allow_html=True)
+
+
+def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoji="🔮", dim=False, editable=False, index="0_0"):
     def _reimagine():
         if st.session_state.toggle_should_reply:
             ai_reply, ai_emoji = llm.request_ai_reply_instant(user_content)
@@ -123,14 +148,15 @@ def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoj
     col_edit1, col_edit2, col_edit3, col_edit4 = st.columns([4, 0.3, 0.3, 0.3])
     with col_edit1:
         render_timestamp(timestamp, dim=dim)
-    if not dim:
+    if not dim or editable:
         with col_edit2:
             edit_mode = st.button("✍🏻", help="Edit", key=f"btn_edit_{index}", use_container_width=True)
         with col_edit3:
             re_imagine = st.button("🔮", help="Re-imagine", key=f"btn_reimagine_{index}", use_container_width=True)
         with col_edit4:
             if st.button("🗑️", help="Delete", key=f"btn_delete_{index}", use_container_width=True):
-                db_manager.delete_row_by_timestamp(timestamp=timestamp)
+                embed_manager.delete_vdb_journal_record_by_timestamp(timestamp=timestamp)
+                db_manager.delete_journal_row_by_timestamp(timestamp=timestamp)
                 st.rerun()
     else:
         re_imagine = False
@@ -148,3 +174,33 @@ def render_paragraph(timestamp: int, user_content: str, ai_content: str, ai_emoj
         render_user_content(user_content, dim=dim)
         if ai_content:
             render_ai_content(ai_content, emoji=ai_emoji, dim=dim)
+
+
+def render_summary(day: datetime.date, summary_content: str, dim=False, editable=False, index="0_0", no_render=False):
+    def _reimagine():
+        db_manager.delete_summary_row_by_date(input_date=day)
+        llm.request_ai_summary(day=day)
+
+    if day > datetime.date.today() or no_render:
+        return
+
+    st.divider()
+    col_edit1, col_edit2 = st.columns([4.6, 0.3])
+    with col_edit1:
+        st.markdown(
+            f"<p align='left' style='color:rgba(255,255,255,.3)' {add_dim_area(dim)}>Summary</p>", unsafe_allow_html=True
+        )
+    if not dim or editable:
+        with col_edit2:
+            re_imagine = st.button("🔮", help="Re-imagine", key=f"btn_reimagine_summary_{index}", use_container_width=True)
+    else:
+        re_imagine = False
+
+    if re_imagine:
+        _reimagine()
+        st.rerun()
+
+    if summary_content:
+        render_summary_content(summary_content, dim=dim)
+    else:
+        render_summary_content("click Re-imagine to summarize.", dim=dim)

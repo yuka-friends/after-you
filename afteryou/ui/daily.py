@@ -2,7 +2,7 @@ import datetime
 
 import streamlit as st
 
-from afteryou import llm, web_component
+from afteryou import embed_manager, llm, web_component
 from afteryou.db_manager import db_manager
 from afteryou.logger import get_logger
 
@@ -24,13 +24,16 @@ def render():
     # FIXME 懒加载
     with col1:
         st.empty()
+        render_summary_data(st.session_state.day_date_input - datetime.timedelta(days=1))
         render_day_data(st.session_state.day_date_input - datetime.timedelta(days=1))
     with col2:
         st.empty()
+        render_summary_data(st.session_state.day_date_input, dim=False)
         render_day_data(st.session_state.day_date_input, dim=False)
 
     with col3:
         st.empty()
+        render_summary_data(st.session_state.day_date_input + datetime.timedelta(days=1))
         render_day_data(st.session_state.day_date_input + datetime.timedelta(days=1))
 
 
@@ -75,6 +78,12 @@ def add_thought():
                 should_ai_reply=st.session_state.toggle_should_reply,
                 img_filepath="",
             )
+            embed_manager.embed_journal_to_vdb(
+                model=st.session_state.embedding_model,
+                user_timestamp=datetime_user.timestamp(),
+                user_note=text,
+                ai_reply_content=ai_reply,
+            )
             st.session_state.text_area_add_thought = ""
 
     col_t1, col_t2, col_t3 = st.columns([1, 1, 1])
@@ -113,8 +122,17 @@ def title_render():
         web_component.render_title(st.session_state.day_date_input + datetime.timedelta(days=1), dim=True)
 
 
+def render_summary_data(input_date, dim=True):
+    summary_content_df = db_manager.db_get_summary_line_by_date(input_date=input_date)
+    if len(summary_content_df) > 0:
+        summary_content = summary_content_df.iloc[0]["summary_content"]
+    else:
+        summary_content = ""
+    web_component.render_summary(day=input_date, summary_content=summary_content, dim=dim)
+
+
 def render_day_data(day_date_input, dim=True, column=0):
-    res_df = db_manager.db_get_range_by_timestamp(
+    res_df = db_manager.db_get_range_by_timestamp_in_table_journal(
         start_timestamp=datetime.datetime.combine(day_date_input, datetime.time(0, 0, 1)).timestamp(),
         end_timestamp=datetime.datetime.combine(day_date_input, datetime.time(23, 23, 59)).timestamp(),
     )

@@ -12,6 +12,7 @@ def render():
         df["mail_timestamp"] = pd.to_datetime(df["mail_timestamp"], unit="s", utc=False)
         st.session_state["mail_df"] = df.sort_index(ascending=False).reset_index(drop=True)
 
+    st.markdown("### 📮 Mailbox")
     col1, col2 = st.columns([1, 2])
     with col1:
         if len(st.session_state.mail_df) - 1 > 0:
