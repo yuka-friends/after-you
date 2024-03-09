@@ -15,6 +15,7 @@ for /F "usebackq tokens=*" %%A in (`python -m poetry env info --path`) do call %
 pre-commit install
 
 python "%~dp0\afteryou\update_routine.py"
+echo.
 pause
 python "%~dp0\afteryou\install_setting.py"
 pause
