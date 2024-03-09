@@ -32,10 +32,16 @@ def generate_summary(day_trackback=3):
     for i in range(1, day_trackback):
         data = datetime.date.today() - datetime.timedelta(days=i)
         row = db_manager.db_get_summary_line_by_date(input_date=data)  # 在总结表中获取日的总结
+        if row is None:
+            continue
         if len(row) > 0:
             continue
         else:  # 如果没有总结，就生成总结
-            llm.request_ai_summary(day=data)
+            df_day = db_manager.db_get_jounal_df_by_day(input_date=data)
+            if df_day is None:
+                continue
+            if len(df_day) > 0:  # 如果当日有记录，进行总结
+                llm.request_ai_summary(day=data)
 
 
 def get_mail():
