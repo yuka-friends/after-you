@@ -88,6 +88,8 @@ while True:
     if len(input_username) > 0:
         config.set_and_save_config("username", input_username)
         break
+    else:
+        print(f"Your name remains {config.username}. Don't worry, you can change it anytime in settings.")
 
 
 while True:
