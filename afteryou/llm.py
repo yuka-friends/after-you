@@ -11,6 +11,15 @@ from afteryou.sys_path import FILEPATH_CHARCTER, FILEPATH_CHARCTER_MAIL
 
 logger = get_logger(__name__)
 
+if (
+    "open_ai_base_url" not in st.session_state
+    or "open_ai_api_key" not in st.session_state
+    or "open_ai_modelname" not in st.session_state
+):
+    st.session_state.open_ai_base_url = config.openai_url
+    st.session_state.open_ai_api_key = config.openai_api_key
+    st.session_state.open_ai_modelname = config.model_name
+
 
 def get_random_character(filepath):
     character_df = file_utils.get_character_df(filepath)
@@ -23,9 +32,9 @@ def request_llm(
     system_prompt,
     temperature,
     emoji,
-    api_key=config.openai_api_key,
-    base_url=config.openai_url,
-    model=config.model_name,
+    api_key=st.session_state.open_ai_api_key,
+    base_url=st.session_state.open_ai_base_url,
+    model=st.session_state.open_ai_modelname,
 ):
     try:
         client = OpenAI(
@@ -52,7 +61,12 @@ def request_llm(
     return completion.choices[0].message.content, emoji
 
 
-def request_ai_reply_instant(text: str, api_key=config.openai_api_key, base_url=config.openai_url, model=config.model_name):
+def request_ai_reply_instant(
+    text: str,
+    api_key=st.session_state.open_ai_api_key,
+    base_url=st.session_state.open_ai_base_url,
+    model=st.session_state.open_ai_modelname,
+):
     character_dict = get_random_character(FILEPATH_CHARCTER)
     system_prompt = str(
         config.system_prompt_prefix
