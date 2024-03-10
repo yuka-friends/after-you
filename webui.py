@@ -4,13 +4,23 @@ import sys
 
 import streamlit as st
 
-from afteryou import embed_manager, routine, utils
-from afteryou.config import config
+from afteryou.config import config  # NOQA: E402
+
+if (
+    "open_ai_base_url" not in st.session_state
+    or "open_ai_api_key" not in st.session_state
+    or "open_ai_modelname" not in st.session_state
+):
+    st.session_state.open_ai_base_url = config.openai_url
+    st.session_state.open_ai_api_key = config.openai_api_key
+    st.session_state.open_ai_modelname = config.model_name
+
+from afteryou import embed_manager, routine, utils  # NOQA: E402
 
 # from afteryou.exceptions import LockExistsException  # NOQA: E402
 # from afteryou.lock import FileLock  # NOQA: E402
 # from afteryou.sys_path import TRAY_LOCK_PATH
-from afteryou.ui import daily, mailbox, search, setting
+from afteryou.ui import daily, mailbox, search, setting  # NOQA: E402
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 os.chdir(PROJECT_ROOT)

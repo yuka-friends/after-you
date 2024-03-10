@@ -56,7 +56,7 @@ def request_llm(
         )
     except Exception as e:
         logger.error(e)
-        return "System: Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again.", "⛔"
+        return "System: Fail to get AI reply, please 🔮re-imagine, check 🔑api-key or restart app and try again.", "⛔"
 
     return completion.choices[0].message.content, emoji
 

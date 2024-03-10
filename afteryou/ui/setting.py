@@ -170,9 +170,10 @@ Each AI reply will be randomly choosed from the following character description.
         st.session_state.open_ai_api_key = input_api_key
         st.session_state.open_ai_modelname = input_model_name
 
-        st.success("🔮 saved.")
+        st.success(
+            "🔮 saved. If you change the api key and other related settings, you may need to restart the application to take effect. 如果更改了 api key 等相关设置，可能需要重启应用才能生效。"
+        )
         time.sleep(1)
-        st.rerun()
 
 
 def all_rows_filled(df):
