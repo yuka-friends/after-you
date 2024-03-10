@@ -50,7 +50,7 @@ def render():
             - datetime.timedelta(seconds=86400)
         )
 
-    search_col, gap_col1, thought_col, gap_col2 = st.columns([1, 0.25, 1.5, 0.25])
+    search_col, gap_col1, thought_col, gap_col2 = st.columns([1, 0.25, 1.2, 0.5])
     with search_col:
         search_method_list = ["keyword search", "similar text search", "image semantic search"]
         title_col, search_method = st.columns([4, 2.5])
@@ -168,10 +168,26 @@ def result_selector(df):
 
 
 def result_dataframe(df, heightIn=800):
-    # FIXME
+    df["datetime"] = pd.to_datetime(df["user_timestamp"], unit="s", utc=False)
+    df = df[
+        [
+            "datetime",
+            "user_note",
+            "ai_character_emoji",
+            "ai_reply_content",
+            "should_ai_reply",
+            "img_filepath",
+            "ai_reply_timestamp",
+            "user_timestamp",
+        ]
+    ]
     st.dataframe(
         df,
         height=heightIn,
+        column_config={
+            "ai_character_emoji": st.column_config.TextColumn("AI", width="small"),
+            "should_ai_reply": st.column_config.CheckboxColumn("should_ai_reply", width="small"),
+        },
     )
 
 

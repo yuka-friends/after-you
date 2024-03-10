@@ -211,6 +211,16 @@ class _DBManager:
         conn.commit()
         conn.close()
 
+    # 根据用户时间戳删除日记对应行
+    def delete_mail_row_by_timestamp(self, timestamp: int):
+        conn = sqlite3.connect(self.db_filepath)
+        c = conn.cursor()
+        query = f"DELETE FROM {self.tablename_mail} WHERE mail_timestamp = ?"
+        logger.info(f"Delete: {query}")
+        c.execute(query, (timestamp,))
+        conn.commit()
+        conn.close()
+
     # 根据用户时间戳删除总结对应行
     def delete_summary_row_by_date(self, input_date: datetime.date):
         date_string = input_date.strftime("%Y-%m-%d")

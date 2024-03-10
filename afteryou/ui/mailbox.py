@@ -7,10 +7,7 @@ from afteryou.db_manager import db_manager
 def render():
     # 初始化
     if "mail_df" not in st.session_state:
-        df = db_manager.read_sqlite_table_to_dataframe("afteryou_mail")
-        df.drop("mail_type", axis=1, inplace=True)
-        df["mail_timestamp"] = pd.to_datetime(df["mail_timestamp"], unit="s", utc=False)
-        st.session_state["mail_df"] = df.sort_index(ascending=False).reset_index(drop=True)
+        st.session_state["mail_df"] = get_mail_df()
 
     st.markdown("### 📮 Mailbox")
     col1, col_n, col2 = st.columns([1, 0.3, 2])
@@ -27,23 +24,34 @@ def render():
                     "from",
                     width="small",
                 ),
-                "mail_timestamp": st.column_config.DatetimeColumn("datetime", width="small"),
+                "mail_datetime": st.column_config.DatetimeColumn("datetime", width="small"),
                 "mail_content": st.column_config.TextColumn("content", width="large"),
+                "mail_timestamp": st.column_config.NumberColumn("timestamp", width="small"),
             },
         )
         st.empty()
     with col_n:
         st.empty()
     with col2:
-        render_letter(
-            from_name=st.session_state.mail_df.loc[mail_select, "mail_from_name"],
-            from_time=st.session_state.mail_df.loc[mail_select, "mail_timestamp"],
-            content=st.session_state.mail_df.loc[mail_select, "mail_content"],
-        )
+        if len(st.session_state.mail_df) != 0:
+            render_letter(
+                from_name=st.session_state.mail_df.loc[mail_select, "mail_from_name"],
+                from_time=st.session_state.mail_df.loc[mail_select, "mail_datetime"],
+                content=st.session_state.mail_df.loc[mail_select, "mail_content"],
+                timestamp=st.session_state.mail_df.loc[mail_select, "mail_timestamp"],
+            )
         st.empty()
 
 
-def render_letter(from_name, from_time, content):
+def get_mail_df():
+    df = db_manager.read_sqlite_table_to_dataframe("afteryou_mail")
+    df.drop("mail_type", axis=1, inplace=True)
+    df["mail_datetime"] = pd.to_datetime(df["mail_timestamp"], unit="s", utc=False)
+    df = df.sort_index(ascending=False).reset_index(drop=True)
+    return df
+
+
+def render_letter(from_name, from_time, content, timestamp):
     css = """
 <style>
 .container_mail_paper {
@@ -60,6 +68,7 @@ def render_letter(from_name, from_time, content):
     width: 700px;
     min-height: 900px;
     text-align: left;
+    margin-bottom: 1.5em;
 
 #mail_meta_container {
     display: flex;
@@ -91,3 +100,10 @@ def render_letter(from_name, from_time, content):
 """
     )
     st.markdown(res, unsafe_allow_html=True)
+
+    def _delete_letter():
+        db_manager.delete_mail_row_by_timestamp(timestamp=int(timestamp))
+        st.session_state["mail_df"] = get_mail_df()
+        st.toast("🗑️ letter deleted")
+
+    st.button("🗑️", help="delete letter", key="btn_delete_letter", on_click=_delete_letter)

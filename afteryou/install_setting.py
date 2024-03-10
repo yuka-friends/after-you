@@ -50,13 +50,15 @@ subprocess.run("color 06", shell=True)
 while True:
     print_header(step=1)
     print(
-        """
+        f"""
     首先，请设置用户文件夹路径。
     First, please set the userdata folder path.
 
     它将包含你记录的所有数据。你可以在想放置文件夹的路径新建一个文件夹，然后将其拖入到这个窗口中，回车确认。你也可以直接回车确认，这样将会把用户文件夹设置在 app 目录下。
     It will contain all the data you recorded. You can create a new folder in the path where you want to place the folder, then drag it into this window and press Enter to confirm. You can also press Enter directly to confirm, which will set the user folder in the app directory.
-"""
+
+    Press [ENTER] to keep on current userdata path: {config.userdata_filepath}
+    """
     )
 
     divider()
@@ -73,12 +75,14 @@ while True:
 while True:
     print_header(step=2)
     print(
-        """
+        f"""
     水晶球是由语言模型驱动的伙伴，它会回复你的想法、写信给你。
     Crystal Ball is a language model-driven companion that responds to your thoughts and writes to you.
 
     你希望水晶球如何称呼你？
     What would you like the crystal ball to call you?
+
+    Press [ENTER] to keep on current name: {config.username}
 """
     )
 
@@ -97,10 +101,10 @@ while True:
     print(
         """
     基本设置已完成！接下来请打开 start_app.bat 即可开始记录你的想法。
-    你可能需要在 app 中填写语言模型服务商或本地语言模型提供的 api key 与 url 以供生成内容。
+    你可能需要在 app 中填写语言模型服务商或本地语言模型提供的 [api key] 等信息以供生成内容。
 
     Basic setup is complete! Next, you can open start_app.bat to write down your thoughts and ideas.
-    You may need to fill in the api key and url provided by the language model service provider or local language model in the app to generate content.
+    You may need to fill in the [api key] etc. provided by the language model service provider or local language model in the app to generate content.
 """
     )
 
