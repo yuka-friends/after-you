@@ -156,7 +156,7 @@ Each AI reply will be randomly choosed from the following character description.
         config.set_and_save_config("reply_language", input_reply_language)
         config.set_and_save_config("enable_embedding", checkbox_enable_embedding)
 
-        st.success("🔮 saved.")
+        st.success("🔮 saved. Refresh to make config available.")
         time.sleep(1)
         st.rerun()
 
