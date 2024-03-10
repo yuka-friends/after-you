@@ -21,10 +21,6 @@ st.set_page_config(page_title="After you - webui", page_icon="🧡", layout="wid
 with open("afteryou\\src\\style.css", encoding="utf-8") as css:
     st.markdown(f"<style>{css.read()}</style>", unsafe_allow_html=True)
 
-if "embedding_model" not in st.session_state and config.enable_embedding:
-    with st.spinner("🔮 loading embedding model, please stand by..."):
-        st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
-
 update_tip = ""
 if "is_new_version" in st.session_state:
     if st.session_state.is_new_version:
@@ -91,6 +87,10 @@ def main():
         if "routine_run_after" not in st.session_state:
             st.session_state.routine_run_after = True
             routine.run_after()
+
+        if "embedding_model" not in st.session_state and config.enable_embedding:
+            with st.spinner("🔮 loading embedding model, please stand by..."):
+                st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
 
 
 main()
