@@ -48,7 +48,16 @@ def render():
 
         st.divider()
         st.markdown("### 🛠️ General")
-        input_reply_language = st.selectbox("Reply language", ["Simple Chinese (简体中文)", "English"])
+        input_reply_language = st.selectbox(
+            "Reply language",
+            [
+                "Simplified Chinese (简体中文)",
+                "Traditional Chinese (繁体中文)",
+                "English",
+                "Japanese (日本語)",
+                "Korean (한국인)",
+            ],
+        )
 
         st.divider()
 
