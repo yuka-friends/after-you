@@ -6,9 +6,10 @@ import streamlit as st
 
 from afteryou import embed_manager, routine, utils
 from afteryou.config import config
-from afteryou.exceptions import LockExistsException  # NOQA: E402
-from afteryou.lock import FileLock  # NOQA: E402
-from afteryou.sys_path import TRAY_LOCK_PATH
+
+# from afteryou.exceptions import LockExistsException  # NOQA: E402
+# from afteryou.lock import FileLock  # NOQA: E402
+# from afteryou.sys_path import TRAY_LOCK_PATH
 from afteryou.ui import daily, mailbox, search, setting
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -60,37 +61,37 @@ def interrupt_start():
 
 
 def main():
-    # 启动时加锁，防止重复启动
-    while True:
-        try:
-            tray_lock = FileLock(TRAY_LOCK_PATH, str(os.getpid()), timeout_s=None)
-            break
-        except LockExistsException:
-            with open(TRAY_LOCK_PATH, encoding="utf-8") as f:
-                check_pid = int(f.read())
+    # 启动时加锁，防止重复启动 # FIXME 不能用在streamlit线程上
+    # while True:
+    #     try:
+    #         tray_lock = FileLock(TRAY_LOCK_PATH, str(os.getpid()), timeout_s=None)
+    #         break
+    #     except LockExistsException:
+    #         with open(TRAY_LOCK_PATH, encoding="utf-8") as f:
+    #             check_pid = int(f.read())
 
-            tray_is_running = utils.is_process_running(check_pid, compare_process_name="python.exe")
-            if tray_is_running:
-                print("    Another After you process is running.")
-                interrupt_start()
-            else:
-                try:
-                    os.remove(TRAY_LOCK_PATH)
-                except FileNotFoundError:
-                    pass
+    #         tray_is_running = utils.is_process_running(check_pid, compare_process_name="python.exe")
+    #         if tray_is_running:
+    #             print("    Another After you process is running.")
+    #             interrupt_start()
+    #         else:
+    #             try:
+    #                 os.remove(TRAY_LOCK_PATH)
+    #             except FileNotFoundError:
+    #                 pass
 
-    with tray_lock:
-        if "routine_run_before" not in st.session_state:
-            st.session_state.routine_run_before = True
-            routine.run_before()
-        render()
-        if "routine_run_after" not in st.session_state:
-            st.session_state.routine_run_after = True
-            routine.run_after()
+    # with tray_lock:
+    if "routine_run_before" not in st.session_state:
+        st.session_state.routine_run_before = True
+        routine.run_before()
+    render()
+    if "routine_run_after" not in st.session_state:
+        st.session_state.routine_run_after = True
+        routine.run_after()
 
-        if "embedding_model" not in st.session_state and config.enable_embedding:
-            with st.spinner("🔮 loading embedding model, please stand by..."):
-                st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
+    if "embedding_model" not in st.session_state and config.enable_embedding:
+        with st.spinner("🔮 loading embedding model, please stand by..."):
+            st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
 
 
 main()
