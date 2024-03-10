@@ -64,7 +64,7 @@ def add_thought():
                 st.session_state.day_date_input, datetime.time(time_now.hour, time_now.minute, time_now.second)
             )
             if st.session_state.toggle_should_reply:
-                ai_reply, ai_emoji = llm.request_ai_reply_instant(text)
+                ai_reply, ai_emoji = llm.request_ai_reply_instant(text=text, datetime_input=datetime_user)
             else:
                 ai_reply, ai_emoji = "", "⛔️"
 

@@ -10,6 +10,7 @@ from afteryou.logger import get_logger
 from afteryou.sys_path import FILEPATH_CHARCTER, FILEPATH_CHARCTER_MAIL
 
 logger = get_logger(__name__)
+FAIL_COPY = "System: Fail to get AI reply, please 🔮re-imagine, check 🔑api-key or restart app and try again."
 
 if (
     "open_ai_base_url" not in st.session_state
@@ -27,7 +28,7 @@ def get_random_character(filepath):
     return character_df.sample(n=1).to_dict(orient="records")[0]
 
 
-def request_llm(
+def request_llm_one_shot(
     user_content,
     system_prompt,
     temperature,
@@ -56,13 +57,40 @@ def request_llm(
         )
     except Exception as e:
         logger.error(e)
-        return "System: Fail to get AI reply, please 🔮re-imagine, check 🔑api-key or restart app and try again.", "⛔"
+        return FAIL_COPY, "⛔"
+
+    return completion.choices[0].message.content, emoji
+
+
+def request_llm_custom_msg(
+    msg,
+    temperature,
+    emoji,
+    api_key=st.session_state.open_ai_api_key,
+    base_url=st.session_state.open_ai_base_url,
+    model=st.session_state.open_ai_modelname,
+):
+    try:
+        client = OpenAI(
+            api_key=api_key,
+            base_url=base_url,
+        )
+        logger.info(msg)
+        completion = client.chat.completions.create(
+            model=model,
+            messages=msg,
+            temperature=temperature,
+        )
+    except Exception as e:
+        logger.error(e)
+        return FAIL_COPY, "⛔"
 
     return completion.choices[0].message.content, emoji
 
 
 def request_ai_reply_instant(
     text: str,
+    datetime_input=datetime.datetime.now(),
     api_key=st.session_state.open_ai_api_key,
     base_url=st.session_state.open_ai_base_url,
     model=st.session_state.open_ai_modelname,
@@ -75,20 +103,53 @@ def request_ai_reply_instant(
         + config.system_prompt_suffix
     ).format(
         user_name=config.username,
-        datetime=datetime.datetime.now().strftime("date: %Y/%m/%d,time: %H-%M-%S"),
+        datetime=datetime_input.strftime("date: %Y/%m/%d,time: %H-%M-%S"),
         weather="sunny",
         reply_language=config.reply_language,
     )
     with st.spinner("🔮 praying to crystal ball ..."):
-        ai_reply, ai_emoji = request_llm(
-            user_content=text,
-            system_prompt=system_prompt,
-            temperature=character_dict["temperature"],
-            emoji=character_dict["emoji"],
-            api_key=api_key,
-            base_url=base_url,
-            model=model,
-        )
+        if config.multi_turn_conversation_memory > 1:  # 多轮记忆
+            start_timestamp = int(datetime_input.replace(hour=0, minute=0, second=1).timestamp())
+            end_timestamp = int(datetime_input.replace(hour=23, minute=59, second=59).timestamp())
+            df = db_manager.db_get_df_range_by_timestamp_in_table_journal(
+                start_timestamp=start_timestamp, end_timestamp=end_timestamp
+            )
+            msg = [
+                {
+                    "role": "system",
+                    "content": system_prompt,
+                }
+            ]
+            if df is not None:
+                df = df.sort_index(ascending=False).reset_index(drop=True)
+                for i in range(config.multi_turn_conversation_memory):
+                    if i > len(df) - 1:
+                        break
+                    msg.append({"role": "user", "content": df.iloc[i]["user_note"]})
+                    if df.iloc[i]["ai_reply_content"]:
+                        msg.append({"role": "assistant", "content": df.iloc[i]["ai_reply_content"]})
+                    else:
+                        msg.append({"role": "assistant", "content": "ok"})
+            msg.append({"role": "user", "content": text})
+
+            ai_reply, ai_emoji = request_llm_custom_msg(
+                msg=msg,
+                temperature=character_dict["temperature"],
+                emoji=character_dict["emoji"],
+                api_key=api_key,
+                base_url=base_url,
+                model=model,
+            )
+        else:
+            ai_reply, ai_emoji = request_llm_one_shot(
+                user_content=text,
+                system_prompt=system_prompt,
+                temperature=character_dict["temperature"],
+                emoji=character_dict["emoji"],
+                api_key=api_key,
+                base_url=base_url,
+                model=model,
+            )
         return ai_reply, ai_emoji
 
 
@@ -102,7 +163,7 @@ def request_ai_summary(day: datetime.date):
         text.append(row["user_note"])
     text_to_summary = "\n".join(text)
     with st.spinner("🔮 praying to crystal ball ..."):
-        text_ai_summary, _ = request_llm(
+        text_ai_summary, _ = request_llm_one_shot(
             user_content=text_to_summary,
             system_prompt=config.system_prompt_summary,
             temperature=0.3,
@@ -149,7 +210,7 @@ def request_mail_by_day_range(date_start: datetime.date, date_end: datetime.date
         datetime_end=date_end.strftime("date: %Y-%m-%d"),
         reply_language=config.reply_language,
     )
-    text_letter, _ = request_llm(
+    text_letter, _ = request_llm_one_shot(
         user_content=text_to_request_mail,
         system_prompt=system_prompt,
         temperature=character_dict["temperature"],
@@ -174,7 +235,7 @@ def request_mail_by_day_range(date_start: datetime.date, date_end: datetime.date
 def request_mail_by_festival(special_date: tuple):
     """根据节日写信"""
     ai_emoji = "😢"
-    ai_reply = "Fail to get AI reply, please 🔮re-imagine or check 🔑api-key and try again."
+    ai_reply = FAIL_COPY
     character_dict = get_random_character(FILEPATH_CHARCTER_MAIL)
     system_prompt = str(
         config.system_prompt_mail_special_day_prefix + character_dict["system_prompt"] + "Please reply in {reply_language}"
@@ -185,7 +246,7 @@ def request_mail_by_festival(special_date: tuple):
         reply_language=config.reply_language,
     )
     with st.spinner("🔮 praying to crystal ball ..."):
-        ai_reply, ai_emoji = request_llm(
+        ai_reply, ai_emoji = request_llm_one_shot(
             user_content="期待收到你的回信！",
             system_prompt=system_prompt,
             temperature=character_dict["temperature"],

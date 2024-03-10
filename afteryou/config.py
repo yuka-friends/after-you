@@ -34,6 +34,7 @@ class Config:
         system_prompt_mail_special_day_prefix,
         enable_embedding,
         webui_access_password_md5,
+        multi_turn_conversation_memory,
         **other_field,
     ) -> None:
         # If need to process input parameters, they should assign another variable name to prevent recursive writing into the config.
@@ -54,6 +55,7 @@ class Config:
         self.system_prompt_mail_special_day_prefix = system_prompt_mail_special_day_prefix
         self.enable_embedding = enable_embedding
         self.webui_access_password_md5 = webui_access_password_md5
+        self.multi_turn_conversation_memory = multi_turn_conversation_memory
 
     def set_and_save_config(self, attr: str, value):
         if not hasattr(self, attr):

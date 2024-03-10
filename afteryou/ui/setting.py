@@ -42,6 +42,10 @@ def render():
             else:
                 st.markdown(f"`{emoji}: {res}`")
 
+        input_multi_turn_conversation_memory = st.number_input(
+            "Multi-turn conversation memory", value=3, min_value=1, max_value=10
+        )
+
         checkbox_enable_embedding = st.checkbox(
             "Enable local embedding",
             value=config.enable_embedding,
@@ -172,6 +176,7 @@ Each AI reply will be randomly choosed from the following character description.
         config.set_and_save_config("model_name", input_model_name)
         config.set_and_save_config("reply_language", input_reply_language)
         config.set_and_save_config("enable_embedding", checkbox_enable_embedding)
+        config.set_and_save_config("multi_turn_conversation_memory", input_multi_turn_conversation_memory)
 
         # 如果有新密码输入，更改；如果留空，关闭功能
         if config_webui_access_password and config_webui_access_password != config.webui_access_password_md5:
