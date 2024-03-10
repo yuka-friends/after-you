@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 
 from afteryou import embed_manager, web_component
+from afteryou.config import config
 from afteryou.db_manager import db_manager
 
 
@@ -270,9 +271,12 @@ def similar_text_search():
             )
 
     # 文本搜索 UI
-    st.session_state.search_content = st.text_input("Search similar journal or describe how it feel/what it is")
+    if "embedding_model" in st.session_state and config.enable_embedding:
+        st.session_state.search_content = st.text_input("Search similar journal or describe how it feel/what it is")
 
-    do_global_keyword_search()
+        do_global_keyword_search()
+    else:
+        st.warning("Enable 'Enable local embedding' option in settings to embed and search journal.")
 
 
 def image_semantic_search():

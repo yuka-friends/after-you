@@ -40,6 +40,12 @@ def render():
             else:
                 st.markdown(f"`{emoji}: {res}`")
 
+        checkbox_enable_embedding = st.checkbox(
+            "Enable local embedding",
+            value=config.enable_embedding,
+            help="If disabled, similar journal search and image search will not be available, but can improve webui loading speed.",
+        )
+
         st.divider()
         st.markdown("### 🛠️ General")
         input_reply_language = st.selectbox("Reply language", ["Simple Chinese (简体中文)", "English"])
@@ -148,6 +154,8 @@ Each AI reply will be randomly choosed from the following character description.
         config.set_and_save_config("openai_api_key", input_api_key)
         config.set_and_save_config("model_name", input_model_name)
         config.set_and_save_config("reply_language", input_reply_language)
+        config.set_and_save_config("enable_embedding", checkbox_enable_embedding)
+
         st.success("🔮 saved.")
         time.sleep(1)
         st.rerun()

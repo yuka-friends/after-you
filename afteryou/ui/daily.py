@@ -3,6 +3,7 @@ import datetime
 import streamlit as st
 
 from afteryou import embed_manager, llm, web_component
+from afteryou.config import config
 from afteryou.db_manager import db_manager
 from afteryou.logger import get_logger
 
@@ -76,12 +77,13 @@ def add_thought():
                 should_ai_reply=st.session_state.toggle_should_reply,
                 img_filepath="",
             )
-            embed_manager.embed_journal_to_vdb(
-                model=st.session_state.embedding_model,
-                user_timestamp=datetime_user.timestamp(),
-                user_note=text,
-                ai_reply_content=ai_reply,
-            )
+            if "embedding_model" in st.session_state and config.enable_embedding:
+                embed_manager.embed_journal_to_vdb(
+                    model=st.session_state.embedding_model,
+                    user_timestamp=datetime_user.timestamp(),
+                    user_note=text,
+                    ai_reply_content=ai_reply,
+                )
             st.session_state.text_area_add_thought = ""
 
     col_t1, col_t2, col_t3 = st.columns([1, 1, 1])
