@@ -2,8 +2,11 @@ import json
 import os
 import shutil
 import time
+from typing import Literal
 
 import pandas as pd
+
+from afteryou.sys_path import CACHE_DICT
 
 
 # 清空指定目录下的所有文件和子目录
@@ -164,3 +167,24 @@ def get_character_df(filepath):
         shutil.copyfile(src_filepath, filepath)
 
     return read_dataframe_from_path(filepath)
+
+
+# 存读缓存值
+def get_cache_dict(key_operate, value_operate=None, operation: Literal["read", "write"] = "read", filepath=CACHE_DICT):
+    ensure_dir(os.path.dirname(filepath))
+    if operation == "read":
+        res = read_json_as_dict_from_path(filepath)
+        try:
+            return res[key_operate]
+        except KeyError:
+            return None
+        except TypeError:
+            return None
+    if operation == "write":
+        if value_operate is not None:
+            res = read_json_as_dict_from_path(filepath)
+            if res is None:
+                res = {key_operate: value_operate}
+            else:
+                res[key_operate] = value_operate
+            save_dict_as_json_to_path(res, filepath)

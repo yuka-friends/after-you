@@ -81,3 +81,13 @@ def greeting_based_on_time():
         return "Good evening"
     else:  # 22:00 - 4:59 is night
         return "Good night"
+
+
+def datetime_to_str(datetime_input: datetime.datetime):
+    """将datetime转为str，以便存读"""
+    return datetime_input.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def str_to_datetime(datetime_str: str):
+    """将str转为datetime，以便存读"""
+    return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")

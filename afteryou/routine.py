@@ -6,7 +6,7 @@ import streamlit as st
 from dateutil.easter import easter
 from lunardate import LunarDate
 
-from afteryou import llm, utils
+from afteryou import file_utils, llm, utils
 from afteryou.db_manager import db_manager
 from afteryou.logger import get_logger
 
@@ -15,12 +15,50 @@ logger = get_logger(__name__)
 
 def run_before():
     # 总结前几天的内容
-    with st.spinner("🔮 Retrieving the summary of previous days..."):
-        generate_summary()
+    if "summary_last_datetime_str" not in st.session_state:
+        st.session_state.summary_last_datetime_str = file_utils.get_cache_dict(
+            key_operate="summary_last_datetime", operation="read"
+        )
+
+    generate_summary_condition = False
+    if st.session_state.summary_last_datetime_str is None:
+        generate_summary_condition = True
+    elif datetime.datetime.now() - utils.str_to_datetime(st.session_state.summary_last_datetime_str) > datetime.timedelta(
+        days=1
+    ):
+        generate_summary_condition = True
+
+    if generate_summary_condition:
+        with st.spinner("🔮 Retrieving the summary of previous days..."):
+            generate_summary()
+            file_utils.get_cache_dict(
+                key_operate="summary_last_datetime",
+                value_operate=utils.datetime_to_str(datetime.datetime.now()),
+                operation="write",
+            )
 
     # 接收信件
-    with st.spinner("📬 Retrieving the mail..."):
-        get_mail()
+    if "get_mail_last_datetime_str" not in st.session_state:
+        st.session_state.get_mail_last_datetime_str = file_utils.get_cache_dict(
+            key_operate="get_mail_last_datetime", operation="read"
+        )
+
+    get_mail_condition = False
+    if st.session_state.get_mail_last_datetime_str is None:
+        get_mail_condition = True
+    elif datetime.datetime.now() - utils.str_to_datetime(st.session_state.get_mail_last_datetime_str) > datetime.timedelta(
+        days=1
+    ):
+        get_mail_condition = True
+
+    if get_mail_condition:
+        with st.spinner("📬 Retrieving the mail..."):
+            get_mail()
+            file_utils.get_cache_dict(
+                key_operate="get_mail_last_datetime",
+                value_operate=utils.datetime_to_str(datetime.datetime.now()),
+                operation="write",
+            )
 
 
 def run_after():
