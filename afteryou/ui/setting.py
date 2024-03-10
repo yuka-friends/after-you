@@ -26,7 +26,7 @@ def render():
         st.divider()
 
         st.markdown("### ✨ AI service")
-        input_api_type = st.selectbox("LLM API", ["OpenAI compatible"])
+        input_api_type = st.selectbox("LLM API", ["OpenAI compatible"], disabled=True)
         input_api_url = st.text_input("API url", value=config.openai_url)
         input_api_key = st.text_input("API key", value=config.openai_api_key)
         input_model_name = st.text_input("model name", value=config.model_name)
