@@ -278,6 +278,3 @@ def similar_text_search():
 def image_semantic_search():
     st.warning("Under development, please stay tuned.")
     pass
-
-
-st.button(type="")
