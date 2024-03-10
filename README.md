@@ -24,7 +24,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 - [ ] tts
 
 
-# 🧡 How to Install
+## 🧡 How to Install
 
 - Install [Git](https://git-scm.com/download/win), just keep clicking next.
 
@@ -40,7 +40,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 
     - The script uses administrator rights to install fonts. You can also manually install the fonts in `__assets__` and then open the installation script with normal rights.
 
-# 🧡 How to use
+## 🧡 How to use
 
 - Open `start_app.bat` in the directory, the tool will host a web server so you can visit by browser (usually at http://localhost:8501 ,The specific situation may be different, please check the CLI window.);
 
@@ -51,7 +51,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
     - Responsive layout for mobile is still under development
 
 
-# 🧡 Thanks
+## 🧡 big thanks
 
 Thanks to the following projects
 
