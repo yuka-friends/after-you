@@ -57,6 +57,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 
 Thanks to the following projects
 
+- https://github.com/lxgw/LxgwWenKai-Screen
 - https://github.com/unum-cloud/uform
 - https://github.com/streamlit/streamlit
 
