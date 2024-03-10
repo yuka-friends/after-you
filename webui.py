@@ -19,7 +19,7 @@ os.chdir(PROJECT_ROOT)
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
 
 st.set_page_config(page_title="After you - webui", page_icon="🧡", layout="wide")
-with open("afteryou\\src\\style.css", encoding="utf-8") as css:
+with open(os.path.join("afteryou", "src", "style.css"), encoding="utf-8") as css:
     st.markdown(f"<style>{css.read()}</style>", unsafe_allow_html=True)
 
 update_tip = ""

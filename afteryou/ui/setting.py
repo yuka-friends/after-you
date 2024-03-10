@@ -1,3 +1,4 @@
+import os
 import time
 from pathlib import Path
 
@@ -133,7 +134,7 @@ Each AI reply will be randomly choosed from the following character description.
             if st.session_state.is_new_version:
                 update_info = " ✨ new version available! Exit and open `install_update.bat` to update."
         about_markdown = (
-            Path("afteryou\\src\\about_en.md")
+            Path(os.path.join("afteryou", "src", "about_en.md"))
             .read_text(encoding="utf-8")
             .format(
                 version=__version__,
@@ -142,9 +143,9 @@ Each AI reply will be randomly choosed from the following character description.
         )
 
         if "about_image_b64" not in st.session_state:
-            st.session_state.about_image_b64 = utils.image_to_base64("__assets__\\about_header.png")
+            st.session_state.about_image_b64 = utils.image_to_base64(os.path.join("__assets__", "about_header.png"))
         if "about_bg_image_b64" not in st.session_state:
-            st.session_state.about_bg_image_b64 = utils.image_to_base64("__assets__\\color_heart_bg.png")
+            st.session_state.about_bg_image_b64 = utils.image_to_base64(os.path.join("__assets__", "color_heart_bg.png"))
         st.markdown(
             f"<img align='right' style='max-width: 100%;max-height: 100%;' src='data:image/png;base64, {st.session_state.about_image_b64}'/>",
             unsafe_allow_html=True,

@@ -4,7 +4,7 @@ import shutil
 from afteryou.config import config
 
 WINDOWS_FONT_FILEPATH = "C:/Windows/Fonts/"
-DEFAULT_FONT_FILEPATH = "__assets__\\LXGWWenKaiGBScreen.ttf"
+DEFAULT_FONT_FILEPATH = os.path.join("__assets__", "LXGWWenKaiGBScreen.ttf")
 TARGET_FONT_FILEPATH = os.path.join(WINDOWS_FONT_FILEPATH, os.path.basename(DEFAULT_FONT_FILEPATH))
 
 try:

@@ -6,7 +6,7 @@ from afteryou.logger import get_logger
 
 CONFIG_NAME_USER = "config_user.json"
 CONFIG_NAME_DEFAULT = "config_default.json"
-DIR_CONFIG_SRC = "afteryou\\src"
+DIR_CONFIG_SRC = os.path.join("afteryou", "src")
 
 CONFIG_FILEPATH_DEFAULT = os.path.join(DIR_CONFIG_SRC, CONFIG_NAME_DEFAULT)
 CONFIG_FILEPATH_USER = CONFIG_NAME_USER

@@ -10,7 +10,7 @@ def get_logger(name, log_name="au.log"):
     if logger is not None:
         return logger
 
-    log_dir = "cache\\logs"
+    log_dir = os.path.join("cache", "logs")
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 

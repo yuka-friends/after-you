@@ -64,7 +64,7 @@ class _DBManager:
                    mail_from_name TEXT,
                    mail_content TEXT,
                    mail_type TEXT);"""
-            mail_start = Path("afteryou\\src\\mail_welcome.md").read_text(encoding="utf-8")
+            mail_start = Path(os.path.join("afteryou", "src", "mail_welcome.md")).read_text(encoding="utf-8")
             self.db_create_table(query=query_journal)
             self.db_insert_data_to_mail(
                 mail_timestamp=int(datetime.datetime.now().timestamp()),

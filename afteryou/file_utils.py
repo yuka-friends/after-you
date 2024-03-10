@@ -163,7 +163,7 @@ def read_txt_as_list(file_path):
 def get_character_df(filepath):
     if not os.path.exists(filepath):
         ensure_dir(os.path.dirname(filepath))
-        src_filepath = os.path.join("afteryou\\src", os.path.basename(filepath))
+        src_filepath = os.path.join("afteryou", "src", os.path.basename(filepath))
         shutil.copyfile(src_filepath, filepath)
 
     return read_dataframe_from_path(filepath)
