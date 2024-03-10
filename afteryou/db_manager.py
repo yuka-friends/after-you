@@ -184,7 +184,7 @@ class _DBManager:
         df = pd.read_sql_query(query, conn, params=(start_timestamp, end_timestamp))
         conn.close()
         if df.empty:
-            return None
+            return None  # FIXME 这里不应该处理为none，多此一举
         else:
             return df
 
@@ -297,7 +297,7 @@ class _DBManager:
     def db_get_jounal_df_by_day(self, input_date: datetime.date):
         """根据日期获取日记数据"""
         start_timestamp = int(datetime.datetime.combine(input_date, datetime.time(0, 0, 1)).timestamp())
-        end_timestamp = int(datetime.datetime.combine(input_date, datetime.time(23, 23, 59)).timestamp())
+        end_timestamp = int(datetime.datetime.combine(input_date, datetime.time(23, 59, 59)).timestamp())
         df_day = self.db_get_df_range_by_timestamp_in_table_journal(
             start_timestamp=start_timestamp, end_timestamp=end_timestamp
         )

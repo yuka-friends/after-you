@@ -156,7 +156,7 @@ def request_ai_reply_instant(
 def request_ai_summary(day: datetime.date):
     """总结一天"""
     start_timestamp = int(datetime.datetime.combine(day, datetime.time(0, 0, 1)).timestamp())
-    end_timestamp = int(datetime.datetime.combine(day, datetime.time(23, 23, 59)).timestamp())
+    end_timestamp = int(datetime.datetime.combine(day, datetime.time(23, 59, 59)).timestamp())
     df = db_manager.db_get_df_range_by_timestamp_in_table_journal(start_timestamp=start_timestamp, end_timestamp=end_timestamp)
     text = []
     for index, row in df.iterrows():

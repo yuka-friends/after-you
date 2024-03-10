@@ -233,7 +233,7 @@ def keyword_search():
                     datetime.datetime.combine(st.session_state.search_date_range_in, datetime.time(0, 0, 1)).timestamp()
                 ),
                 end_timestamp=int(
-                    datetime.datetime.combine(st.session_state.search_date_range_out, datetime.time(23, 23, 59)).timestamp()
+                    datetime.datetime.combine(st.session_state.search_date_range_out, datetime.time(23, 59, 59)).timestamp()
                 ),
                 exclude_words=st.session_state.search_content_exclude,
             )
