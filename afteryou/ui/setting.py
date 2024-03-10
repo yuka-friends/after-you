@@ -3,7 +3,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from afteryou import __version__, file_utils, llm
+from afteryou import __version__, file_utils, llm, utils
 from afteryou.config import config
 from afteryou.sys_path import FILEPATH_CHARCTER, FILEPATH_CHARCTER_MAIL
 
@@ -125,7 +125,20 @@ Each AI reply will be randomly choosed from the following character description.
                 update_info=update_info,
             )
         )
+
+        if "about_image_b64" not in st.session_state:
+            st.session_state.about_image_b64 = utils.image_to_base64("__assets__\\about_header.png")
+        if "about_bg_image_b64" not in st.session_state:
+            st.session_state.about_bg_image_b64 = utils.image_to_base64("__assets__\\color_heart_bg.png")
+        st.markdown(
+            f"<img align='right' style='max-width: 100%;max-height: 100%;' src='data:image/png;base64, {st.session_state.about_image_b64}'/>",
+            unsafe_allow_html=True,
+        )
         st.markdown(about_markdown, unsafe_allow_html=True)
+        st.markdown(
+            f"<div style='margin-top: 12em'><img align='right' style='max-width: 100%;max-height: 100%;' src='data:image/png;base64, {st.session_state.about_bg_image_b64}'/></div>",
+            unsafe_allow_html=True,
+        )
 
     if st.button("Save and apply settings", type="primary"):
         input_api_type

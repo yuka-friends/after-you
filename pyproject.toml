@@ -13,6 +13,7 @@ openai = "^1.13.3"
 uform = "^1.1.1"
 faiss-cpu = "^1.8.0"
 lunardate = "^0.2.2"
+opencv-python = "^4.9.0.80"
 
 [[tool.poetry.source]]
 name = "tsinghua"

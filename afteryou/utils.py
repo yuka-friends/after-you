@@ -1,5 +1,7 @@
+import base64
 import datetime
 
+import cv2
 import psutil
 import requests
 
@@ -91,3 +93,17 @@ def datetime_to_str(datetime_input: datetime.datetime):
 def str_to_datetime(datetime_str: str):
     """将str转为datetime，以便存读"""
     return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+
+
+# 图片路径转base64
+def image_to_base64(image_path):
+    # 使用cv2加载图像，包括透明通道
+    image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+
+    # 将图像转换为PNG格式
+    _, encoded_image = cv2.imencode(".png", image)  # 返回一个元组 (retval, buffer)。retval 表示编码的结果，buffer 是包含图像数据的字节对象。
+
+    # 将图像数据编码为base64字符串
+    base64_image = base64.b64encode(encoded_image.tobytes()).decode("utf-8")
+
+    return base64_image
