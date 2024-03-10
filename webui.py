@@ -34,7 +34,9 @@ def render():
     if not config.openai_api_key:
         st.warning("It seems that the LLM api key is not setting, go to the settings set to setup.", icon="👋🏻")
 
-    st.markdown(f"##### 🧡 {utils.greeting_based_on_time()}, {config.username}")
+    st.markdown(
+        f"<h5 style='color:#977455'>🧡 {utils.greeting_based_on_time()}, {config.username}.</h5>", unsafe_allow_html=True
+    )
 
     tab_daily, tab_mailbox, tab_search, tab_setting = st.tabs(["daily", "mailbox", "search", "setting" + update_tip])
     with tab_daily:

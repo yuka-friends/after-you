@@ -1,5 +1,6 @@
 import base64
 import datetime
+import random
 
 import cv2
 import psutil
@@ -75,14 +76,41 @@ def is_process_running(pid, compare_process_name):
 def greeting_based_on_time():
     current_hour = datetime.datetime.now().hour
 
+    copywrite = [
+        [
+            "Good morning",
+            "Morning's light, whispering delight",
+            "A new day has dawned, painting the world in shades of hope",
+            "Morning sun seeps softly, greeting the world anew",
+        ],
+        [
+            "Good afternoon",
+            "Sun at its zenith, embracing the day",
+            "Afternoon's delight, sun shines so bright",
+            "As the day unfolds, new stories are told",
+        ],
+        [
+            "Good evening",
+            "Evening falls, as day's curtain calls",
+            "Night's gentle eve, in its tender weave",
+            "When the sun takes a bow, the evening's now",
+        ],
+        [
+            "Good night",
+            "Night's sweet lullaby, beneath a starry sky",
+            "In the hush of the night, may dreams take flight",
+            "Rest your eyes, under night's wise skies",
+        ],
+    ]
+
     if 5 <= current_hour < 12:  # 5:00 - 11:59 is morning
-        return "Good morning"
+        return random.choice(copywrite[0])
     elif 12 <= current_hour < 17:  # 12:00 - 16:59 is afternoon
-        return "Good afternoon"
+        return random.choice(copywrite[1])
     elif 17 <= current_hour < 22:  # 17:00 - 21:59 is evening
-        return "Good evening"
+        return random.choice(copywrite[2])
     else:  # 22:00 - 4:59 is night
-        return "Good night"
+        return random.choice(copywrite[3])
 
 
 def datetime_to_str(datetime_input: datetime.datetime):

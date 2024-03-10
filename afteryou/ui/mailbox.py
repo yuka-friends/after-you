@@ -45,9 +45,16 @@ def render():
 
 def get_mail_df():
     df = db_manager.read_sqlite_table_to_dataframe("afteryou_mail")
-    df.drop("mail_type", axis=1, inplace=True)
     df["mail_datetime"] = pd.to_datetime(df["mail_timestamp"], unit="s", utc=False)
     df = df.sort_index(ascending=False).reset_index(drop=True)
+    df = df[
+        [
+            "mail_datetime",
+            "mail_from_name",
+            "mail_content",
+            "mail_timestamp",
+        ]
+    ]
     return df
 
 
