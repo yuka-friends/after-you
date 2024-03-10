@@ -19,6 +19,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 
 ### 🚧 roadmap
 - [ ] journal static
+- [ ] multiple rounds of chat
 - [ ] responsive layout for mobile
 - [ ] add imgae vision index
 - [ ] add tag search and summary
@@ -41,6 +42,8 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 - Open `install_update.bat` in the directory as Administrator to install dependencies and configure the app. If everything goes well, you can start using it!
 
     - The script uses administrator rights to install fonts. You can also manually install the fonts in `__assets__` and then open the installation script with normal rights.
+
+    - Note: The userdata folder will only store diary related content, and your api key and other LLM authentication information will be placed in the program directory config_user.json.
 
 ## 🧡 How to use
 

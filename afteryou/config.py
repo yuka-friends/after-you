@@ -33,6 +33,7 @@ class Config:
         max_token_summary_input,
         system_prompt_mail_special_day_prefix,
         enable_embedding,
+        webui_access_password_md5,
         **other_field,
     ) -> None:
         # If need to process input parameters, they should assign another variable name to prevent recursive writing into the config.
@@ -52,6 +53,7 @@ class Config:
         self.max_token_summary_input = max_token_summary_input
         self.system_prompt_mail_special_day_prefix = system_prompt_mail_special_day_prefix
         self.enable_embedding = enable_embedding
+        self.webui_access_password_md5 = webui_access_password_md5
 
     def set_and_save_config(self, attr: str, value):
         if not hasattr(self, attr):

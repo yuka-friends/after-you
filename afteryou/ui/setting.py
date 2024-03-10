@@ -1,3 +1,4 @@
+import hashlib
 import os
 import time
 from pathlib import Path
@@ -60,6 +61,12 @@ def render():
             ],
         )
 
+        config_webui_access_password = st.text_input(
+            "🔒 webui password",
+            value=config.webui_access_password_md5,
+            help="If password input filled, you will be asked to provide a password when accessing webui. This setting will not encrypt your data, but only protects the entrance to webui to avoid access by unfamiliar users in the same LAN.",
+            type="password",
+        )
         st.divider()
 
     with col2:
@@ -165,6 +172,14 @@ Each AI reply will be randomly choosed from the following character description.
         config.set_and_save_config("model_name", input_model_name)
         config.set_and_save_config("reply_language", input_reply_language)
         config.set_and_save_config("enable_embedding", checkbox_enable_embedding)
+
+        # 如果有新密码输入，更改；如果留空，关闭功能
+        if config_webui_access_password and config_webui_access_password != config.webui_access_password_md5:
+            config.set_and_save_config(
+                "webui_access_password_md5", hashlib.md5(config_webui_access_password.encode("utf-8")).hexdigest()
+            )
+        elif len(config_webui_access_password) == 0:
+            config.set_and_save_config("webui_access_password_md5", "")
 
         st.session_state.open_ai_base_url = input_api_url
         st.session_state.open_ai_api_key = input_api_key

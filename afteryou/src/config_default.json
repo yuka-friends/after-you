@@ -14,5 +14,6 @@
     "username": "little friend",
     "embed_search_recall_result_per_db": 15,
     "max_token_summary_input": 3000,
-    "enable_embedding": true
+    "enable_embedding": true,
+    "webui_access_password_md5": ""
 }

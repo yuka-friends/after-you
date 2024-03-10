@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import os
 import sys
 
@@ -104,4 +105,22 @@ def main():
             st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
 
 
-main()
+# 检查 webui 是否启用密码保护
+if "webui_password_accessed" not in st.session_state:
+    st.session_state["webui_password_accessed"] = False
+
+if config.webui_access_password_md5 and st.session_state.webui_password_accessed is False:
+    col_pwd1, col_pwd2 = st.columns([1, 2])
+    with col_pwd1:
+        password = st.text_input(
+            "🔒 Password:",
+            type="password",
+            help="Forgot your password? Delete the webui_access_password_md5 item in config_user.json to reset password.",
+        )
+    with col_pwd2:
+        st.empty()
+    if hashlib.md5(password.encode("utf-8")).hexdigest() == config.webui_access_password_md5:
+        st.session_state.webui_password_accessed = True
+
+if not config.webui_access_password_md5 or st.session_state.webui_password_accessed is True:
+    main()
