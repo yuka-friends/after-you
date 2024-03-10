@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 
@@ -34,8 +35,14 @@ def render():
     if not config.openai_api_key:
         st.warning("It seems that the LLM api key is not setting, go to the settings set to setup.", icon="👋🏻")
 
+    if "welcome_header_and_update_dt" not in st.session_state:
+        st.session_state.welcome_header_and_update_dt = (utils.greeting_based_on_time(), datetime.datetime.now())
+    elif datetime.datetime.now() - st.session_state.welcome_header_and_update_dt[1] > datetime.timedelta(hours=1):
+        st.session_state.welcome_header_and_update_dt = (utils.greeting_based_on_time(), datetime.datetime.now())
+
     st.markdown(
-        f"<h5 style='color:#977455'>🧡 {utils.greeting_based_on_time()}, {config.username}.</h5>", unsafe_allow_html=True
+        f"<h5 style='color:#977455'>🧡 {st.session_state.welcome_header_and_update_dt[0]}, {config.username}.</h5>",
+        unsafe_allow_html=True,
     )
 
     tab_daily, tab_mailbox, tab_search, tab_setting = st.tabs(["daily", "mailbox", "search", "setting" + update_tip])
