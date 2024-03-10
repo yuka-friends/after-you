@@ -89,11 +89,12 @@ while True:
     divider()
     input_username = input("> ")
 
-    if len(input_username) > 0:
+    if input_username:
         config.set_and_save_config("username", input_username)
         break
-    else:
+    elif len(config.username) > 0:
         print(f"Your name remains {config.username}. Don't worry, you can change it anytime in settings.")
+        break
 
 
 while True:
