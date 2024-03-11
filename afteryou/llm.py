@@ -184,7 +184,7 @@ def request_mail_by_day_range(date_start: datetime.date, date_end: datetime.date
     # 用所有数据进入mail总结撰写
     days = date_end - date_start
     text = []
-    for i in days.days:
+    for i in range(days.days):
         date_query = date_start + datetime.timedelta(days=i)
         row = db_manager.db_get_summary_line_by_date(input_date=date_query)  # 在总结表中获取日的总结
         if len(row) == 0:
