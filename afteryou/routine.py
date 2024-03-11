@@ -24,7 +24,7 @@ def run_before():
     if st.session_state.summary_last_datetime_str is None:
         generate_summary_condition = True
     elif datetime.datetime.now() - utils.str_to_datetime(st.session_state.summary_last_datetime_str) > datetime.timedelta(
-        days=1
+        hours=8,
     ):
         generate_summary_condition = True
 
