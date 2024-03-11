@@ -97,7 +97,7 @@ def add_thought():
             key="text_area_add_thought",
             on_change=submit_user_input_area,
         )
-        col_submit1, col_submit2, col_submit3 = st.columns([0.5, 1, 3])
+        col_submit1, col_submit2, col_submit3 = st.columns([0.5, 2, 2])
         with col_submit1:
             st.toggle("🔮", key="toggle_should_reply", value=True)
         with col_submit2:
