@@ -6,7 +6,7 @@
 
 After You is an idea recording tool inspired by [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89-%E8%AE%B0%E5%BD%95%E7%94%9F%E6%B4%BB%E6%97%A5%E5%B8%B8-ai-%E6%97%A5%E8%AE%B0-%E7%AC%94%E8%AE%B0). Leveraging the power of language models, it actively responds to your thoughts, understands your emotions, helps you find similar past ideas, and sends letters from the shimmering crystal ball. All data is stored locally, you can synchronize userdata folders to cloud like Dropbox or Onedrive.
 
-After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89-%E8%AE%B0%E5%BD%95%E7%94%9F%E6%B4%BB%E6%97%A5%E5%B8%B8-ai-%E6%97%A5%E8%AE%B0-%E7%AC%94%E8%AE%B0) 启发的碎片想法记录工具。通过语言模型接口，她可以主动回应你的想法、洞察你的情绪，帮助你寻找相似的过往想法，从水晶球煜煜微光送来信件。所有数据都存储在本地，你可以将数据文件夹同步于云盘。
+After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89-%E8%AE%B0%E5%BD%95%E7%94%9F%E6%B4%BB%E6%97%A5%E5%B8%B8-ai-%E6%97%A5%E8%AE%B0-%E7%AC%94%E8%AE%B0) 启发的碎片想法记录工具。通过语言模型接口，它可以主动回应你的想法、洞察你的情绪，帮助你寻找相似的过往想法，从水晶球煜煜微光送来信件。所有数据都存储在本地，你可以将数据文件夹同步于云盘。
 
 ---
 
@@ -19,19 +19,21 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 
 ### 🚧 roadmap
 - [ ] journal static
-- [ ] multiple rounds of chat
+- [x] multiple rounds of memory
+- [ ] deployment support on macOS/linux
 - [ ] responsive layout for mobile
 - [ ] add imgae vision index
 - [ ] add tag search and summary
 - [ ] weather info to LLM
+- [ ] separate backend
 - [ ] tts
 
 
 ## 🧡 How to Install
 
-- Install [Git](https://git-scm.com/download/win), just keep clicking next.
+- Install [Git](https://git-scm.com/download), just keep clicking next.
 
-- Install [Python](https://www.python.org/ftp/python/3.11.7/python-3.11.7-amd64.exe), make sure to check `Add python.exe to PATH` when installing.
+- Install [Python](https://www.python.org/downloads/release/python-3118/), make sure to check `Add python.exe to PATH` when installing.
 
 - In file explorer, navigate to the directory where you want to install After-you, and download the tool through the terminal command `git clone https://github.com/yuka-friends/after-you`;
 

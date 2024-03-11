@@ -1,20 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 
-echo "Changing to script directory"
 cd "$(dirname "$0")"
 
 echo "-git: updating repository"
 git pull
 
 echo "-updating dependencies"
-python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple poetry
-python -m poetry config virtualenvs.in-project true
-python -m poetry install
+pip3 install poetry --user
+python3 -m poetry config virtualenvs.in-project true
+python3 -m poetry install
 
-source $(python -m poetry env info --path)/bin/activate
-pre-commit install
+source $(python3 -m poetry env info --path)/bin/activate
+pip3 install pre-commit
 
-python "$(pwd)/afteryou/update_routine.py"
-read -p "Press any key to continue ..."
-python "$(pwd)/afteryou/install_setting.py"
-read -p "Press any key to continue ..."
+python3 -m afteryou.update_routine
+read -n 1 -s -r -p "Press any key to continue..."
+python3 -m afteryou.install_setting
+read -n 1 -s -r -p "Press any key to continue..."

@@ -68,7 +68,7 @@ def run_after():
             st.session_state.is_new_version = utils.get_new_version_if_available()
 
 
-def generate_summary(day_trackback=3):
+def generate_summary(day_trackback=4):
     """生成过去数天的总结"""
     for i in range(1, day_trackback):
         data = datetime.date.today() - datetime.timedelta(days=i)

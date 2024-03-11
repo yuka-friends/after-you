@@ -23,9 +23,13 @@ except Exception as e:
     config.set_and_save_config("enable_embedding", False)
 
 
-if not os.path.exists(TARGET_FONT_FILEPATH):
-    print(f"installing font {DEFAULT_FONT_FILEPATH}")
-    try:
-        shutil.copy(DEFAULT_FONT_FILEPATH, TARGET_FONT_FILEPATH)
-    except PermissionError:
-        print("install font fail, try rerun as administration.")
+# FIXME mac and unix
+try:
+    if not os.path.exists(TARGET_FONT_FILEPATH):
+        print(f"installing font {DEFAULT_FONT_FILEPATH}")
+        try:
+            shutil.copy(DEFAULT_FONT_FILEPATH, TARGET_FONT_FILEPATH)
+        except PermissionError:
+            print("install font fail, try rerun as administration.")
+except Exception as e:
+    print(e)
