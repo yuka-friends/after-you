@@ -189,6 +189,8 @@ def request_mail_by_day_range(date_start: datetime.date, date_end: datetime.date
         row = db_manager.db_get_summary_line_by_date(input_date=date_query)  # 在总结表中获取日的总结
         if len(row) == 0:
             df_day = db_manager.db_get_jounal_df_by_day(input_date=date_query)
+            if df_day is None:
+                continue
             if len(df_day) > 0:  # 如果当日有记录，进行总结
                 summary_content = request_ai_summary(day=date_query)
                 if summary_content:
