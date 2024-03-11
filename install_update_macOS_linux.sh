@@ -9,6 +9,7 @@ echo "-updating dependencies"
 pip3 install poetry --user
 python3 -m poetry config virtualenvs.in-project true
 python3 -m poetry install
+python3 -m poetry update
 
 source $(python3 -m poetry env info --path)/bin/activate
 pip3 install pre-commit

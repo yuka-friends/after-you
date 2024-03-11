@@ -157,3 +157,4 @@ test.ipynb
 config_user.json
 .vscode
 cache
+.DS_Store

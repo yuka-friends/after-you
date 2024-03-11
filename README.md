@@ -26,6 +26,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 - [ ] add tag search and summary
 - [ ] weather info to LLM
 - [ ] separate backend
+- [ ] embedding unembed note
 - [ ] tts
 
 
