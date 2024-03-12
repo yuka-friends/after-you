@@ -78,6 +78,7 @@ def render():
         st.markdown(
             """
 Each AI reply will be randomly choosed from the following character description. At least one character needs to be enabled.
+\nYou can specify the character to reply by texting @emoji, even if the character is not enabled. For example: `@😺 meow meow`
 """
         )
         st.markdown("##### Instant reply")

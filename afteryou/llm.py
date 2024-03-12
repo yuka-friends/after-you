@@ -3,7 +3,7 @@ import datetime
 import streamlit as st
 from openai import OpenAI
 
-from afteryou import file_utils
+from afteryou import file_utils, utils
 from afteryou.config import config
 from afteryou.db_manager import db_manager
 from afteryou.logger import get_logger
@@ -22,8 +22,14 @@ if (
     st.session_state.open_ai_modelname = config.model_name
 
 
-def get_random_character(filepath):
+def get_random_character(filepath, emoji_match=None):
+    """index"""
     character_df = file_utils.get_character_df(filepath)
+    if emoji_match is not None:   # 使用 emoji 进行匹配
+        at_character = utils.find_first_match_row_in_df(df=character_df, row_name="emoji", column_value=emoji_match)
+        if at_character is not None:
+            return at_character.to_dict()
+        
     character_df = character_df[character_df["enable"] != False]  # noqa: E712
     return character_df.sample(n=1).to_dict(orient="records")[0]
 
@@ -95,7 +101,14 @@ def request_ai_reply_instant(
     base_url=st.session_state.open_ai_base_url,
     model=st.session_state.open_ai_modelname,
 ):
-    character_dict = get_random_character(FILEPATH_CHARCTER)
+    # 判断是否 @ 特定角色
+    character_df = file_utils.read_dataframe_from_path(FILEPATH_CHARCTER)   # 获取所有角色 emoji
+    emoji_list = character_df['emoji'].drop_duplicates().tolist()
+    at_char = utils.find_char_after_at(text)   # 寻找 @ 的内容
+    if at_char is not None and at_char in emoji_list:
+        character_dict = get_random_character(FILEPATH_CHARCTER, emoji_match=at_char)
+    else:
+        character_dict = get_random_character(FILEPATH_CHARCTER)
     system_prompt = str(
         config.system_prompt_prefix
         + character_dict["system_prompt"]

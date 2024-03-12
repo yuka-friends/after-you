@@ -1,10 +1,11 @@
 import base64
 import datetime
 import random
+import requests
 
 import cv2
 import psutil
-import requests
+import pandas as pd
 
 from afteryou import __version__
 
@@ -135,3 +136,36 @@ def image_to_base64(image_path):
     base64_image = base64.b64encode(encoded_image.tobytes()).decode("utf-8")
 
     return base64_image
+
+
+def get_list_first_one_match_in_string(text, lst):
+    for word in lst:
+        if word in text:
+            return word
+    return None
+
+
+def find_char_after_at(string):
+    """找到'@'的位置"""
+    at_index = string.find('@')
+    # 假如在字符串中确实找到了'@'
+    if at_index != -1:
+        # 确保'@'后面还有其他字符
+        if at_index < len(string) - 1:
+            # 返回'@'后面的第一个字符
+            return string[at_index + 1]
+        else:
+            return None # '@'是最后一个字符，后面没有其他字符
+    else: 
+        return None # 字符串中没有'@'
+    
+
+def find_first_match_row_in_df(df:pd.DataFrame, row_name:str, column_value):
+    # 使用 .loc 通过条件查找行
+    A_rows = df.loc[df[row_name] == column_value]
+    # 判断是否有满足条件的行
+    if not A_rows.empty:
+        # 返回第一个满足条件的行
+        return A_rows.iloc[0]
+    else:
+        return None
