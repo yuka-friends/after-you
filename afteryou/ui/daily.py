@@ -138,7 +138,7 @@ def render_day_data(day_date_input, dim=True, column=0):
         start_timestamp=datetime.datetime.combine(day_date_input, datetime.time(0, 0, 1)).timestamp(),
         end_timestamp=datetime.datetime.combine(day_date_input, datetime.time(23, 59, 59)).timestamp(),
     )
-    if res_df is not None:
+    if not res_df.empty:
         render_summary_data(day_date_input, dim=dim)
         for index, row in res_df[::-1].iterrows():
             web_component.render_paragraph(
