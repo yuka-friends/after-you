@@ -63,7 +63,7 @@ while True:
 
     divider()
     input_userdata_path = input("> ")
-
+    input_userdata_path = input_userdata_path.rstrip()
     if input_userdata_path:
         file_utils.ensure_dir(input_userdata_path)
         config.set_and_save_config("userdata_filepath", input_userdata_path)
@@ -88,7 +88,7 @@ while True:
 
     divider()
     input_username = input("> ")
-
+    input_username = input_username.rstrip()
     if input_username:
         config.set_and_save_config("username", input_username)
         break
