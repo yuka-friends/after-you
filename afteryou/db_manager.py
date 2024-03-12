@@ -183,10 +183,7 @@ class _DBManager:
         """
         df = pd.read_sql_query(query, conn, params=(start_timestamp, end_timestamp))
         conn.close()
-        if df.empty:
-            return None  # FIXME 这里不应该处理为none，多此一举
-        else:
-            return df
+        return df
 
     # 根据出入日期获取总结时间段数据
     def db_get_range_by_date_in_table_summary(self, date_start: datetime.date, date_end: datetime.date):

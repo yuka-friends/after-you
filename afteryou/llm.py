@@ -65,6 +65,7 @@ def request_llm_one_shot(
         logger.error(e)
         return FAIL_COPY, "⛔"
 
+    logger.info(completion.choices[0].message.content)
     return completion.choices[0].message.content, emoji
 
 
@@ -91,6 +92,7 @@ def request_llm_custom_msg(
         logger.error(e)
         return FAIL_COPY, "⛔"
 
+    logger.info(completion.choices[0].message.content)
     return completion.choices[0].message.content, emoji
 
 
@@ -133,7 +135,7 @@ def request_ai_reply_instant(
                     "content": system_prompt,
                 }
             ]
-            if df is not None:
+            if not df.empty:
                 df = df.sort_index(ascending=False).reset_index(drop=True)
                 for i in range(config.multi_turn_conversation_memory):
                     if i > len(df) - 1:
