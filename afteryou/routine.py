@@ -98,16 +98,17 @@ def get_mail():
             llm.request_mail_by_day_range(date_start=date_to_check - datetime.timedelta(days=6), date_end=date_to_check)
             st.toast("📮📨 You got new letter!")
 
-    # 检查今/前三天是否为特别节日
-    for i in range(3):
-        date = datetime.date.today() - datetime.timedelta(days=i)
-        festival_res = get_special_day(date)
-        if festival_res:
-            date_to_check = pd.to_datetime(festival_res[0][0]).date()
-            logger.debug(date_to_check)
-            if not any(df["mail_datetime"].dt.date.isin([date_to_check])):  # 是否已有信件
-                llm.request_mail_by_festival(special_date=festival_res)
-                st.toast("📮📨 You got new letter!")
+    if not datetime.date.today() == utils.recent_last_sunday():  # 如果今天是周日，应当推迟不报
+        # 检查今/前三天是否为特别节日
+        for i in range(3):
+            date = datetime.date.today() - datetime.timedelta(days=i)
+            festival_res = get_special_day(date)
+            if festival_res:
+                date_to_check = pd.to_datetime(festival_res[0][0]).date()
+                logger.debug(date_to_check)
+                if not any(df["mail_datetime"].dt.date.isin([date_to_check])):  # 是否已有信件
+                    llm.request_mail_by_festival(special_date=festival_res)
+                    st.toast("📮📨 You got new letter!")
 
 
 def get_special_day(date: datetime.date):
