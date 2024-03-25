@@ -211,7 +211,7 @@ def request_mail_by_day_range(date_start: datetime.date, date_end: datetime.date
                 if summary_content:
                     text.append(summary_content)
         else:
-            text.append(row["summary_content"])
+            text.append(str(row["summary_content"]))
 
     character_dict = get_random_character(FILEPATH_CHARCTER_MAIL)
     text_to_request_mail = "\n".join(text)
