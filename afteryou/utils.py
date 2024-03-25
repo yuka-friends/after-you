@@ -1,11 +1,11 @@
 import base64
 import datetime
 import random
-import requests
 
 import cv2
-import psutil
 import pandas as pd
+import psutil
+import requests
 
 from afteryou import __version__
 
@@ -23,11 +23,13 @@ def get_weekday_str(input_date):
 
 
 def recent_last_sunday():
-    """获取最近的上一个周日的日期"""
+    """获取最近的上一个周日的日期，如果今天是周日则是最近的周日"""
     today = datetime.date.today()
     day_diff = today.weekday() + 1  # 因为Python中索引是从0开始的，周一为0，周日为6
     if day_diff == 1:  # 如果是周一，最近的周日是前一天
         return today - datetime.timedelta(days=1)
+    elif day_diff == 7:  # 如果是周日，最近的周日是今天
+        return today
     else:
         return today - datetime.timedelta(days=day_diff)
 
@@ -147,7 +149,7 @@ def get_list_first_one_match_in_string(text, lst):
 
 def find_char_after_at(string):
     """找到'@'的位置"""
-    at_index = string.find('@')
+    at_index = string.find("@")
     # 假如在字符串中确实找到了'@'
     if at_index != -1:
         # 确保'@'后面还有其他字符
@@ -155,12 +157,12 @@ def find_char_after_at(string):
             # 返回'@'后面的第一个字符
             return string[at_index + 1]
         else:
-            return None # '@'是最后一个字符，后面没有其他字符
-    else: 
-        return None # 字符串中没有'@'
-    
+            return None  # '@'是最后一个字符，后面没有其他字符
+    else:
+        return None  # 字符串中没有'@'
 
-def find_first_match_row_in_df(df:pd.DataFrame, row_name:str, column_value):
+
+def find_first_match_row_in_df(df: pd.DataFrame, row_name: str, column_value):
     # 使用 .loc 通过条件查找行
     A_rows = df.loc[df[row_name] == column_value]
     # 判断是否有满足条件的行

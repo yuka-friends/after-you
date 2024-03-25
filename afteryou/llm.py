@@ -25,11 +25,11 @@ if (
 def get_random_character(filepath, emoji_match=None):
     """index"""
     character_df = file_utils.get_character_df(filepath)
-    if emoji_match is not None:   # 使用 emoji 进行匹配
+    if emoji_match is not None:  # 使用 emoji 进行匹配
         at_character = utils.find_first_match_row_in_df(df=character_df, row_name="emoji", column_value=emoji_match)
         if at_character is not None:
             return at_character.to_dict()
-        
+
     character_df = character_df[character_df["enable"] != False]  # noqa: E712
     return character_df.sample(n=1).to_dict(orient="records")[0]
 
@@ -104,9 +104,9 @@ def request_ai_reply_instant(
     model=st.session_state.open_ai_modelname,
 ):
     # 判断是否 @ 特定角色
-    character_df = file_utils.read_dataframe_from_path(FILEPATH_CHARCTER)   # 获取所有角色 emoji
-    emoji_list = character_df['emoji'].drop_duplicates().tolist()
-    at_char = utils.find_char_after_at(text)   # 寻找 @ 的内容
+    character_df = file_utils.read_dataframe_from_path(FILEPATH_CHARCTER)  # 获取所有角色 emoji
+    emoji_list = character_df["emoji"].drop_duplicates().tolist()
+    at_char = utils.find_char_after_at(text)  # 寻找 @ 的内容
     if at_char is not None and at_char in emoji_list:
         character_dict = get_random_character(FILEPATH_CHARCTER, emoji_match=at_char)
     else:
@@ -123,7 +123,7 @@ def request_ai_reply_instant(
         reply_language=config.reply_language,
     )
     with st.spinner("🔮 praying to crystal ball ..."):
-        if config.multi_turn_conversation_memory > 1:  # 多轮记忆
+        if config.multi_turn_conversation_memory > 0:  # 多轮记忆
             start_timestamp = int(datetime_input.replace(hour=0, minute=0, second=1).timestamp())
             end_timestamp = int(datetime_input.replace(hour=23, minute=59, second=59).timestamp())
             df = db_manager.db_get_df_range_by_timestamp_in_table_journal(
@@ -204,12 +204,12 @@ def request_mail_by_day_range(date_start: datetime.date, date_end: datetime.date
         row = db_manager.db_get_summary_line_by_date(input_date=date_query)  # 在总结表中获取日的总结
         if len(row) == 0:
             df_day = db_manager.db_get_jounal_df_by_day(input_date=date_query)
-            if df_day is None: # FIXME 去掉所有none！！！
-                continue
             if len(df_day) > 0:  # 如果当日有记录，进行总结
                 summary_content = request_ai_summary(day=date_query)
                 if summary_content:
                     text.append(summary_content)
+            else:
+                continue
         else:
             text.append(str(row["summary_content"]))
 

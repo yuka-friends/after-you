@@ -43,7 +43,7 @@ def render():
                 st.markdown(f"`{emoji}: {res}`")
 
         input_multi_turn_conversation_memory = st.number_input(
-            "Multi-turn conversation memory", value=3, min_value=1, max_value=10
+            "Multi-turn conversation memory", value=3, min_value=0, max_value=10, help="0 for disable"
         )
 
         checkbox_enable_embedding = st.checkbox(
