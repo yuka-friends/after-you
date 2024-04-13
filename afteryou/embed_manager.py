@@ -207,7 +207,7 @@ def embed_unembed_journal_to_vdb(model, vdb=VectorDatabase(vdb_filename=os.path.
     """
     流程：将未 embed 的日记片段 embed 到 vdb
     """
-    db_df = db_manager.db_fetch_table_all_data(table_name="afteryou_journal")
+    db_df = db_manager.db_fetch_table_all_data(table_name=db_manager.tablename_journal)
     for index, row in db_df.iterrows():
         if row["rowid"] not in vdb.all_ids_list:
             embed_journal_to_vdb(

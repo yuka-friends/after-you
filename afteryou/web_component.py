@@ -203,3 +203,114 @@ def render_summary(day: datetime.date, summary_content: str, dim=False, editable
         render_summary_content(summary_content, dim=dim)
     else:
         render_summary_content("click Re-imagine to summarize. ↗", dim=dim)
+
+
+def render_count_static(days_num, chars_num):
+    """绘制统计数据"""
+    css = """
+    <style>
+        body{
+            background-color: #19191A;
+        }
+        #static-container{
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            padding-bottom: 60px;
+        }
+        #static-title{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.30);
+            font-family: "Space Mono" !important;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .static-content-container p{
+            display: inline-block;
+            text-align: left;
+            margin: 0;
+        }
+        #static-days-num{
+            background: conic-gradient(from -85deg at 15.41% 113.79%, rgba(214, 78, 35, 0.85) 2.3368923738598824deg, rgba(255, 136, 70, 0.80) 100.06757497787476deg, rgba(133, 0, 214, 0.71) 205.94711065292358deg);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            leading-trim: both;
+            text-edge: cap;
+            font-family: "Space Mono" !important;
+            font-size: 48px;
+            font-style: medium;
+            font-weight: 700;
+            line-height: normal;
+        }
+        #static-days-copy{
+            leading-trim: both;
+            text-edge: cap;
+            font-family: "Space Mono" !important;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            background: linear-gradient(90deg, rgba(172, 87, 163, 0.80) 8.33%, #8062C7 94.44%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #static-chars-stat{
+            color: #8062C7;
+            leading-trim: both;
+            text-edge: cap;
+            font-family: "Space Mono" !important;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            margin-left: 0.5em;
+        }
+    </style>
+"""
+    res = (
+        css
+        + f"""
+    <div id="static-container">
+        <p id="static-title">Record your heart for</p>
+        <div class="static-content-container">
+            <p id="static-days-num">
+                {days_num}
+            </p>
+            <p id="static-days-copy">
+                days
+            </p>
+            <p id="static-chars-stat">
+                /{chars_num} chars
+            </p>
+        </div>
+    </div>
+"""
+    )
+    st.markdown(res, unsafe_allow_html=True)
+
+
+"""template
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+
+    </style>
+</head>
+<body>
+
+
+</body>
+</html>
+"""

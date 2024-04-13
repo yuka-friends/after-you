@@ -7,19 +7,26 @@ from streamlit.file_util import get_streamlit_file_path
 from afteryou.config import config
 
 WINDOWS_FONT_FILEPATH = "C:/Windows/Fonts/"
-DEFAULT_FONT_FILEPATH = os.path.join("__assets__", "LXGWWenKaiGBScreen.ttf")
-TARGET_FONT_FILEPATH = os.path.join(WINDOWS_FONT_FILEPATH, os.path.basename(DEFAULT_FONT_FILEPATH))
+FONT_LIST = [
+    "LXGWWenKaiGBScreen.ttf",
+    "SpaceMono-Bold.ttf",
+    "SpaceMono-BoldItalic.ttf",
+    "SpaceMono-Italic.ttf",
+    "SpaceMono-Regular.ttf",
+]
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def install_font():
     if platform.system() == "Windows":
-        if not os.path.exists(TARGET_FONT_FILEPATH):
-            print(f"installing font {DEFAULT_FONT_FILEPATH}")
-            try:
-                shutil.copy(DEFAULT_FONT_FILEPATH, TARGET_FONT_FILEPATH)
-            except PermissionError:
-                print("install font fail, try rerun as administration.")
+        for font_name in FONT_LIST:
+            font_filepath = os.path.join(WINDOWS_FONT_FILEPATH, font_name)
+            if not os.path.exists(font_filepath):
+                print(f"installing font {font_name}")
+                try:
+                    shutil.copy(os.path.join("__assets__", font_name), font_filepath)
+                except PermissionError:
+                    print("install font fail, try rerun as administration.")
     elif platform.system() == "Darwin":  # macOS
         # 获得用户家目录
         home = os.path.expanduser("~")
@@ -31,8 +38,9 @@ def install_font():
 
         # 复制字体文件到字体文件夹
         try:
-            shutil.copy2(DEFAULT_FONT_FILEPATH, font_folder)
-            print(f"Font installed at: {os.path.join(font_folder, os.path.basename(DEFAULT_FONT_FILEPATH))}")
+            for font_name in FONT_LIST:
+                shutil.copy2(os.path.join("__assets__", font_name), font_folder)
+                print(f"Font installed at: {os.path.join(font_folder, font_name)}")
         except Exception as e:
             print(f"Unable to install font due to error: {e}")
 

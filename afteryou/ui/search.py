@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 import streamlit as st
 
-from afteryou import embed_manager, web_component
+from afteryou import embed_manager, file_utils, static, utils, web_component
 from afteryou.config import config
 from afteryou.db_manager import db_manager
 
@@ -50,6 +50,34 @@ def render():
             + datetime.timedelta(seconds=st.session_state.search_latest_record_time_int)
             - datetime.timedelta(seconds=86400)
         )
+
+    # 更新统计
+    # 更新总天数
+    if "update_static_last_datetime_str" not in st.session_state:
+        st.session_state.update_static_last_datetime_str = file_utils.get_cache_dict(
+            key_operate="update_static_last_datetime_str", operation="read"
+        )
+
+    update_static_condition = False
+    if st.session_state.update_static_last_datetime_str is None:
+        update_static_condition = True
+    elif datetime.datetime.now() - utils.str_to_datetime(
+        st.session_state.update_static_last_datetime_str
+    ) > datetime.timedelta(
+        hours=24,
+    ):
+        update_static_condition = True
+
+    if update_static_condition:
+        all_day_cnt, all_chars_cnt = static.update_journal_static()
+        file_utils.get_cache_dict(
+            key_operate="update_static_last_datetime_str",
+            value_operate=utils.datetime_to_str(datetime.datetime.now()),
+            operation="write",
+        )
+    else:
+        all_day_cnt = file_utils.get_cache_dict(key_operate="all_day_cnt", operation="read")
+        all_chars_cnt = file_utils.get_cache_dict(key_operate="all_chars_cnt", operation="read")
 
     search_col, gap_col1, thought_col, gap_col2 = st.columns([1, 0.25, 1.2, 0.5])
     with search_col:
@@ -112,7 +140,8 @@ def render():
         if not len(st.session_state.db_global_search_result) == 0:
             show_and_locate_journal_snippet_by_df(st.session_state.db_global_search_result, result_choose_num)
         else:
-            st.empty()
+            web_component.render_count_static(all_day_cnt, all_chars_cnt)
+            component_month_scatter()
 
     with gap_col2:
         st.empty()
@@ -282,3 +311,48 @@ def similar_text_search():
 def image_semantic_search():
     st.warning("Under development, please stay tuned.")
     pass
+
+
+def component_month_scatter():
+    if "static_year_select_lazy" not in st.session_state:
+        st.session_state.static_year_select_lazy = ""
+    if "static_month_select_lazy" not in st.session_state:
+        st.session_state.static_month_select_lazy = ""
+
+    col_month1, col_month2, col_month3 = st.columns([2, 1, 1])
+    with col_month1:
+        st.empty()
+    with col_month2:
+        st.session_state.static_year_select = st.number_input(
+            "Year", value=datetime.datetime.now().year, key="static_year_select_num_input", label_visibility="collapsed"
+        )
+    with col_month3:
+        st.session_state.static_month_select = st.number_input(
+            "Month",
+            value=datetime.datetime.now().month,
+            key="static_month_select_num_input",
+            min_value=1,
+            max_value=12,
+            label_visibility="collapsed",
+        )
+
+    if "static_month_df" not in st.session_state:
+        st.session_state.static_month_df = static.get_month_chars_overview_scatter(
+            datetime.date(st.session_state.static_year_select, st.session_state.static_month_select, 1)
+        )
+
+    if (st.session_state.static_year_select != st.session_state.static_year_select_lazy) or (
+        st.session_state.static_month_select != st.session_state.static_month_select_lazy
+    ):
+        st.session_state.static_year_select_lazy = st.session_state.static_year_select
+        st.session_state.static_month_select_lazy = st.session_state.static_month_select
+        st.session_state.static_month_df = static.get_month_chars_overview_scatter(
+            datetime.date(st.session_state.static_year_select, st.session_state.static_month_select, 1)
+        )
+
+    st.line_chart(
+        st.session_state.static_month_df,
+        x="weekday",
+        y="chars",
+        color="#C55B30",
+    )

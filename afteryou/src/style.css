@@ -1,5 +1,5 @@
 body * {
-    font-family: 'LXGW WenKai Screen R', sans-serif !important;
+    font-family: 'LXGW WenKai Screen R', 'LXGW WenKai GB Screen Regular', 'LXGW WenKai', 'LXGWWenKaiGBScreen', serif !important;
 }
 .dim_area{
     opacity: .5;
