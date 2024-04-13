@@ -18,7 +18,8 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 > This project is still in the early stages of development, and you may encounter some minor problems in experience and use, feel free to submit issue feedback, follow updates, and initiate discussions or roadmap in [Discussions](https://github.com/yuka-friends/Windrecorder/discussions).You are also welcome to help us optimize and build the project, submit PR/review.
 
 ### 🚧 roadmap
-- [ ] journal static
+- [x] journal static
+- [ ] journal mood detect and static
 - [x] multiple rounds of memory
 - [ ] deployment support on macOS/linux
 - [ ] responsive layout for mobile
@@ -26,7 +27,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 - [ ] add tag search and summary
 - [ ] weather info to LLM
 - [ ] separate backend
-- [ ] embedding unembed note
+- [x] embedding unembed note
 - [ ] tts
 
 
