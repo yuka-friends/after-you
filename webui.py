@@ -5,6 +5,7 @@ import sys
 
 import streamlit as st
 
+from afteryou import file_utils
 from afteryou.config import config  # NOQA: E402
 
 if (
@@ -72,26 +73,6 @@ def interrupt_start():
 
 
 def main():
-    # 启动时加锁，防止重复启动 # FIXME 不能用在streamlit线程上
-    # while True:
-    #     try:
-    #         tray_lock = FileLock(TRAY_LOCK_PATH, str(os.getpid()), timeout_s=None)
-    #         break
-    #     except LockExistsException:
-    #         with open(TRAY_LOCK_PATH, encoding="utf-8") as f:
-    #             check_pid = int(f.read())
-
-    #         tray_is_running = utils.is_process_running(check_pid, compare_process_name="python.exe")
-    #         if tray_is_running:
-    #             print("    Another After you process is running.")
-    #             interrupt_start()
-    #         else:
-    #             try:
-    #                 os.remove(TRAY_LOCK_PATH)
-    #             except FileNotFoundError:
-    #                 pass
-
-    # with tray_lock:
     if "routine_run_before" not in st.session_state:
         st.session_state.routine_run_before = True
         routine.run_before()
@@ -103,6 +84,31 @@ def main():
     if "embedding_model" not in st.session_state and config.enable_embedding:
         with st.spinner("🔮 loading embedding model, please stand by..."):
             st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
+
+            # 将未 embed 的日记片段 embed 到 vdb
+            if "embed_not_index_journal_last_datetime_str" not in st.session_state:
+                st.session_state.embed_not_index_journal_last_datetime_str = file_utils.get_cache_dict(
+                    key_operate="embed_not_index_journal_last_datetime_str", operation="read"
+                )
+
+            embed_not_index_journal_condition = False
+            if st.session_state.embed_not_index_journal_last_datetime_str is None:
+                embed_not_index_journal_condition = True
+            elif datetime.datetime.now() - utils.str_to_datetime(
+                st.session_state.embed_not_index_journal_last_datetime_str
+            ) > datetime.timedelta(
+                hours=24,
+            ):
+                embed_not_index_journal_condition = True
+
+            if embed_not_index_journal_condition:
+                with st.spinner("🔮 Embedding not index journal..."):
+                    embed_manager.embed_unembed_journal_to_vdb(model=st.session_state.embedding_model)
+                    file_utils.get_cache_dict(
+                        key_operate="embed_not_index_journal_last_datetime_str",
+                        value_operate=utils.datetime_to_str(datetime.datetime.now()),
+                        operation="write",
+                    )
 
 
 # 检查 webui 是否启用密码保护

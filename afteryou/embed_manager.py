@@ -163,7 +163,9 @@ def query_vector_in_vdb(vector, vdb_filepath=FILEPATH_VDB_JOURNAL):
     return sorted_df
 
 
-def embed_journal_to_vdb(model, user_timestamp, user_note, ai_reply_content):
+def embed_journal_to_vdb(
+    model, user_timestamp, user_note, ai_reply_content, vdb=VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL))
+):
     """
     流程：将日记片段 embed 到 vdb
     """
@@ -174,7 +176,6 @@ def embed_journal_to_vdb(model, user_timestamp, user_note, ai_reply_content):
 
     text_combine = user_note + "\nreply:" + ai_reply_content
     text_embedding = embed_text(text_combine, model=model, detach_numpy=False)
-    vdb = VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL))
     rowid = db_manager.query_rowid(timestamp=user_timestamp)
     if rowid:
         vdb.add_vector(vector=text_embedding, rowid=rowid)
@@ -202,6 +203,17 @@ def query_text_in_vdb_journal(model, text):
     return df
 
 
-# 测试用例
-if __name__ == "__main__":
-    pass
+def embed_unembed_journal_to_vdb(model, vdb=VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL))):
+    """
+    流程：将未 embed 的日记片段 embed 到 vdb
+    """
+    db_df = db_manager.db_fetch_table_all_data(table_name="afteryou_journal")
+    for index, row in db_df.iterrows():
+        if row["rowid"] not in vdb.all_ids_list:
+            embed_journal_to_vdb(
+                model=model,
+                user_timestamp=row["user_timestamp"],
+                user_note=row["user_note"],
+                ai_reply_content=row["ai_reply_content"],
+                vdb=vdb,
+            )

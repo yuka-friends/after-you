@@ -172,6 +172,14 @@ class _DBManager:
         conn.commit()
         conn.close()
 
+    # 获取所有数据（包含rowid）
+    def db_fetch_table_all_data(self, table_name):
+        conn = sqlite3.connect(self.db_filepath)
+        query = f"SELECT rowid, * FROM {table_name}"
+        df = pd.read_sql_query(query, conn)
+        conn.close()
+        return df
+
     # 根据出入时间戳获取日记时间段数据
     def db_get_df_range_by_timestamp_in_table_journal(self, start_timestamp: int, end_timestamp: int):
         conn = sqlite3.connect(self.db_filepath)
@@ -194,9 +202,6 @@ class _DBManager:
         df = pd.read_sql_query(sql, conn, params=(start_date_string, end_date_string))
         conn.close()
         return df
-
-    # 创建查询语句
-    sql = "SELECT * FROM A WHERE summary_date BETWEEN ? AND ?"
 
     # 根据用户时间戳删除日记对应行
     def delete_journal_row_by_timestamp(self, timestamp):
