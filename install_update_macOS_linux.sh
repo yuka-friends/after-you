@@ -14,6 +14,8 @@ python3 -m poetry update
 source $(python3 -m poetry env info --path)/bin/activate
 pip3 install pre-commit
 
+python -m textblob.download_corpora
+
 python3 -m afteryou.update_routine
 read -n 1 -s -r -p "Press any key to continue..."
 python3 -m afteryou.install_setting

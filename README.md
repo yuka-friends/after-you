@@ -19,7 +19,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 
 ### 🚧 roadmap
 - [x] journal static
-- [ ] journal mood detect and static
+- [x] journal emotion static
 - [x] multiple rounds of memory
 - [ ] deployment support on macOS/linux
 - [ ] responsive layout for mobile

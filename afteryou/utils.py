@@ -6,8 +6,12 @@ import cv2
 import pandas as pd
 import psutil
 import requests
+from textblob import TextBlob
 
 from afteryou import __version__
+from afteryou.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 # 将时间戳秒数转为datetime格式
@@ -126,6 +130,16 @@ def str_to_datetime(datetime_str: str):
     return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
 
 
+def date_to_str(date_input: datetime.date):
+    """将date转为str，以便存读"""
+    return date_input.strftime("%Y-%m-%d")
+
+
+def str_to_date(date_str: str):
+    """将str转为date，以便存读"""
+    return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+
+
 # 图片路径转base64
 def image_to_base64(image_path):
     # 使用cv2加载图像，包括透明通道
@@ -171,3 +185,67 @@ def find_first_match_row_in_df(df: pd.DataFrame, row_name: str, column_value):
         return A_rows.iloc[0]
     else:
         return None
+
+
+def google_translate(text, lang_from="ja", lang_to="en"):
+    url = "https://translate.googleapis.com/translate_a/single"
+    # dt参数的作用，这里说明一下，dt决定了最终返回的数据，可以包含多个dt参数，以下是dt的一些值：
+    # t - 源text的翻译
+    # at - 会额外返回一些近义词
+    # ex - examples
+    # ss - 如果翻译的是单个词，会返回与该词相关的动词、形容词、名词
+    # md - 如果翻译的是单个词，返回该词的定义
+    # rw - 组词
+    # bd
+    # rm
+    # dt - 似乎是设定返回数据的格式
+    params = {"client": "gtx", "dt": "t", "sl": lang_from, "tl": lang_to, "q": text}
+
+    headers = {
+        "authority": "translate.googleapis.com",
+        "accept": "*/*",
+        "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "none",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+        "x-client-data": "CJC2yQEIpLbJAQipncoBCJXmygEIlqHLAQiFoM0B",
+    }
+    response = requests.get(url, headers=headers, params=params)
+    results = response.json()[0]
+
+    # 返回的结果并不是整句，所以需要拼起来
+    TRANSLATION_INDEX = 0
+    translation = ""
+    for result in results:
+        translation += result[TRANSLATION_INDEX]
+    # print(f"{json.dumps(response.json(), indent=2, ensure_ascii=False)}")
+    return translation
+
+
+def get_en_text_emotion(text: str):
+    text.replace("\n", "")
+    blob = TextBlob(text)
+    prob = blob.sentiment.polarity
+    logger.debug(f"{prob=}")
+    return blob.sentiment.polarity
+
+
+def map_range(value, src_range, dest_range):
+    """
+    Map a value from source range to destination range.
+
+    Args:
+      value (float): the value to map.
+      src_range (tuple): a tuple of two values defining the source range.
+      dest_range (tuple): a tuple of two values defining the destination range.
+
+    Returns:
+      The mapped value.
+    """
+    src_min, src_max = src_range
+    dest_min, dest_max = dest_range
+    src_span = src_max - src_min
+    dest_span = dest_max - dest_min
+    scaled_value = (value - src_min) / src_span
+    return dest_min + (scaled_value * dest_span)

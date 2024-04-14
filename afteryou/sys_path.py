@@ -7,4 +7,4 @@ FILEPATH_CHARCTER_MAIL = os.path.join(config.userdata_filepath, "mail_character.
 FILEPATH_DB = os.path.join(config.userdata_filepath, "afteryou.db")
 FILEPATH_VDB_JOURNAL = os.path.join(config.userdata_filepath, "afteryou_journal.vdb")
 TRAY_LOCK_PATH = os.path.join("cache", "lock", "webui.lock")
-CACHE_DICT = os.path.join("cache", "cache_dict.json")
+CACHE_DICT = os.path.join(config.userdata_filepath, "cache_dict.json")

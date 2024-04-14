@@ -64,7 +64,7 @@ def render():
     elif datetime.datetime.now() - utils.str_to_datetime(
         st.session_state.update_static_last_datetime_str
     ) > datetime.timedelta(
-        hours=24,
+        hours=12,
     ):
         update_static_condition = True
 
@@ -337,22 +337,22 @@ def component_month_scatter():
         )
 
     if "static_month_df" not in st.session_state:
-        st.session_state.static_month_df = static.get_month_chars_overview_scatter(
-            datetime.date(st.session_state.static_year_select, st.session_state.static_month_select, 1)
-        )
+        with st.spinner("🔮 Statistics in progress, please wait..."):
+            st.session_state.static_month_df = static.get_month_chars_overview_scatter(
+                datetime.date(st.session_state.static_year_select, st.session_state.static_month_select, 1)
+            )
 
     if (st.session_state.static_year_select != st.session_state.static_year_select_lazy) or (
         st.session_state.static_month_select != st.session_state.static_month_select_lazy
     ):
         st.session_state.static_year_select_lazy = st.session_state.static_year_select
         st.session_state.static_month_select_lazy = st.session_state.static_month_select
-        st.session_state.static_month_df = static.get_month_chars_overview_scatter(
-            datetime.date(st.session_state.static_year_select, st.session_state.static_month_select, 1)
-        )
+        with st.spinner("🔮 Statistics in progress, please wait..."):
+            st.session_state.static_month_df = static.get_month_chars_overview_scatter(
+                datetime.date(st.session_state.static_year_select, st.session_state.static_month_select, 1)
+            )
 
     st.line_chart(
         st.session_state.static_month_df,
-        x="weekday",
-        y="chars",
-        color="#C55B30",
+        color=["#8062C7", "#C55B30", "#3B261F"],
     )
