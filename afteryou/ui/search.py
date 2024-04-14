@@ -354,5 +354,5 @@ def component_month_scatter():
 
     st.line_chart(
         st.session_state.static_month_df,
-        color=["#8062C7", "#C55B30", "#3B261F"],
+        color=["#8062C7", "#C55B30", "#442A1F"],
     )
