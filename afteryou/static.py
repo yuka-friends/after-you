@@ -73,6 +73,8 @@ def get_month_chars_overview_scatter(dt: datetime.datetime):
 
     for day in range(1, month_days + 1):
         # get mood data
+        if datetime.date(dt.year, dt.month, day) == datetime.date.today():  # skip today
+            continue
         db_df = db_manager.db_get_jounal_df_by_day(datetime.date(dt.year, dt.month, day))
         if len(db_df) > 0:
             try:
