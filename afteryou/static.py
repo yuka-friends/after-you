@@ -79,6 +79,7 @@ def get_month_chars_overview_scatter(dt: datetime.datetime):
         if len(db_df) > 0:
             try:
                 emotion_prob = emotion_date_dict[utils.date_to_str(datetime.date(dt.year, dt.month, day))]
+                emotion_prob = (emotion_prob - 0.1) * 1.1  # calibrate
                 emotion_prob_display = utils.map_range(emotion_prob, (-1, 1), (0, max_chars))
                 df_month_data.at[day, "emotion"] = emotion_prob_display
             except KeyError:
