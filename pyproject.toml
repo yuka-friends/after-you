@@ -6,7 +6,7 @@ authors = ["antonoko <antonoko@outlook.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.10,<3.12"
 pre-commit = "^3.6.2"
 openai = "^1.13.3"
 numpy = "^1.24.3"
@@ -26,6 +26,12 @@ uform = "^3.0.2"
 onnxruntime = "^1.18.1"
 psutil = "^6.0.0"
 streamlit = "^1.36.0"
+jsonschema = "^4.23.0"
+attrs = "^23.2.0"
+referencing = "^0.35.1"
+rpds-py = "0.5.3"
+jsonschema-specifications = "^2023.12.1"
+toolz = "^0.12.1"
 
 [[tool.poetry.source]]
 name = "tsinghua"

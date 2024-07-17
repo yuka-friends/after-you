@@ -60,6 +60,30 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "attrs"
+version = "23.2.0"
+description = "Classes Without Boilerplate"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "attrs-23.2.0-py3-none-any.whl", hash = "sha256:99b87a485a5820b23b879f04c2305b44b951b502fd64be915879d77a7e8fc6f1"},
+    {file = "attrs-23.2.0.tar.gz", hash = "sha256:935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30"},
+]
+
+[package.extras]
+cov = ["attrs[tests]", "coverage[toml] (>=5.3)"]
+dev = ["attrs[tests]", "pre-commit"]
+docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-towncrier", "towncrier", "zope-interface"]
+tests = ["attrs[tests-no-zope]", "zope-interface"]
+tests-mypy = ["mypy (>=1.6)", "pytest-mypy-plugins"]
+tests-no-zope = ["attrs[tests-mypy]", "cloudpickle", "hypothesis", "pympler", "pytest (>=4.3.0)", "pytest-xdist[psutil]"]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "blinker"
 version = "1.8.2"
 description = "Fast, simple object-to-object and broadcast signaling"
@@ -684,6 +708,41 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "jsonschema"
+version = "4.23.0"
+description = ""
+optional = false
+python-versions = "*"
+files = [
+    {file = "jsonschema-4.23.0-py3-none-any.whl", hash = "sha256:fbadb6f8b144a8f8cf9f0b89ba94501d143e50411a1278633f56a7acf7fd5566"},
+    {file = "jsonschema-4.23.0.tar.gz", hash = "sha256:d71497fef26351a33265337fa77ffeb82423f3ea21283cd9467bb03999266bc4"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "jsonschema-specifications"
+version = "2023.12.1"
+description = "The JSON Schema meta-schemas and vocabularies, exposed as a Registry"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "jsonschema_specifications-2023.12.1-py3-none-any.whl", hash = "sha256:87e4fdf3a94858b8a2ba2778d9ba57d8a9cafca7c7489c46ba0d30a8bc6a9c3c"},
+    {file = "jsonschema_specifications-2023.12.1.tar.gz", hash = "sha256:48a76787b3e70f5ed53f1160d2b81f586e4ca6d1548c5de7085d1682674764cc"},
+]
+
+[package.dependencies]
+referencing = ">=0.31.0"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "langdetect"
 version = "1.0.9"
 description = "Language detection library ported from Google's language-detection."
@@ -1036,8 +1095,7 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
-    {version = ">=1.23.5", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
+    {version = ">=1.23.5", markers = "python_version >= \"3.11\""},
     {version = ">=1.21.4", markers = "python_version >= \"3.10\" and platform_system == \"Darwin\" and python_version < \"3.11\""},
     {version = ">=1.21.2", markers = "platform_system != \"Darwin\" and python_version >= \"3.10\" and python_version < \"3.11\""},
 ]
@@ -1103,7 +1161,6 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
 ]
@@ -1653,6 +1710,22 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "referencing"
+version = "0.35.1"
+description = ""
+optional = false
+python-versions = "*"
+files = [
+    {file = "referencing-0.35.1-py3-none-any.whl", hash = "sha256:eda6d3234d62814d1c64e305c1331c9a3a6132da475ab6382eaa997b21ee75de"},
+    {file = "referencing-0.35.1.tar.gz", hash = "sha256:25b42124a6c8b632a425174f24087783efb348a6f1e0008e63cd4466fedf703c"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "regex"
 version = "2024.5.15"
 description = "Alternative regular expression module, to replace re."
@@ -1788,6 +1861,43 @@ pygments = ">=2.13.0,<3.0.0"
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<9)"]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "rpds-py"
+version = "0.5.3"
+description = "Python bindings to Rust's persistent data structures (rpds)"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "rpds_py-0.5.3-cp38-abi3-macosx_10_7_x86_64.whl", hash = "sha256:5cf9ccd7f655ad71369452c53f9d5a53cfc4d5d9789d931b553cefd67ca5bfc8"},
+    {file = "rpds_py-0.5.3-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:67a5e4f989d3ea3688d02ce2d4c80d7065ddb08e5ae8d5658b578d18ebf999d6"},
+    {file = "rpds_py-0.5.3-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:24bffbed304d3fdf4ff982f64bd87c515f5b3b4d64dc5753b2e9a861c0804fc2"},
+    {file = "rpds_py-0.5.3-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:bb5618a0849b810f45e1ea4f75efccd27c89a3e5730468e19e1f038519148705"},
+    {file = "rpds_py-0.5.3-cp38-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:4dfac6c182e1a043c082493ac3e93bc23afcdaab893036ee01ae6f44dae759d0"},
+    {file = "rpds_py-0.5.3-cp38-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:a4390267b46ddd10241157315863fdc31ac49a9b1b323256d5fabe892a99f969"},
+    {file = "rpds_py-0.5.3-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1d0ffd469c85131a27f6a73f18e37f1b7f79a042f8b263882eda5e9c98f02277"},
+    {file = "rpds_py-0.5.3-cp38-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:633dca6e2bffe0d66c4f95300b83b2472fc7469c88be69b84655d20ba9c43876"},
+    {file = "rpds_py-0.5.3-cp38-abi3-win32.whl", hash = "sha256:5b161ca1a73c87ecc78f7ce3bcc97989624a0033efc418fe790684ce6b06694c"},
+    {file = "rpds_py-0.5.3-cp38-abi3-win_amd64.whl", hash = "sha256:b17603430bddd2a300ee041709960619694fc6ffc54b9392553cc44e405e7ef8"},
+    {file = "rpds_py-0.5.3-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:62ab6e23fb323bbc84b8efaaf9bbe81723b6c92f6604b7ef762650789948c754"},
+    {file = "rpds_py-0.5.3-pp38-pypy38_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:1d01a0634e1860d5b00bb67275a2b0decafeb8c074eec436210b87f0ee352463"},
+    {file = "rpds_py-0.5.3-pp38-pypy38_pp73-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:5584e562ba41b7ed2c8eb004177bd46762586eb655d8aef1a571c8829fa96f40"},
+    {file = "rpds_py-0.5.3-pp38-pypy38_pp73-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:055d15712d5c046797862f44e053723bb3bfa95abd83289adac14e112360021f"},
+    {file = "rpds_py-0.5.3-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8fdbd5c0f4082633bf9b962bd1ab1fa52e2aea90c628fbf62e25347830d20c81"},
+    {file = "rpds_py-0.5.3-pp38-pypy38_pp73-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:38aab0a2757a13085636d0042073221c4390df7976f34cdcf42de317d259a85b"},
+    {file = "rpds_py-0.5.3-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e0b4359845e68baa7393042a6f8e03121e23a673b8dacbefbf817017675c6cc4"},
+    {file = "rpds_py-0.5.3-pp39-pypy39_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:992e1e4f08bf9a02c1d4704eb02513d8302845592bbc5196b5b8bcd7a71fddc7"},
+    {file = "rpds_py-0.5.3-pp39-pypy39_pp73-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:f7e9d7950c22b2b5d53f6a3c37966eca97d497183d8783ff24fccde648f919bb"},
+    {file = "rpds_py-0.5.3-pp39-pypy39_pp73-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:a616be0defe58b34b21e529067fde65dc1a8fda6def7e6b65b149b21033e1378"},
+    {file = "rpds_py-0.5.3-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4bca9b46457b6ae6dad7fe51cf38e165aeb9107ab2d90b145265de24f04d80b5"},
+    {file = "rpds_py-0.5.3-pp39-pypy39_pp73-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:dc39af58e67ebaa48463c92587b4eb1ca1ddd115a6f8889018979af1ca2d5fb0"},
+    {file = "rpds_py-0.5.3.tar.gz", hash = "sha256:00f9de032cc048be9bdb6913cc6801bda6d85258e3da815adcdc90feafc3f43d"},
+]
 
 [package.source]
 type = "legacy"
@@ -2199,6 +2309,22 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "toolz"
+version = "0.12.1"
+description = "List processing tools and functional utilities"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "toolz-0.12.1-py3-none-any.whl", hash = "sha256:d22731364c07d72eea0a0ad45bafb2c2937ab6fd38a3507bf55eae8744aa7d85"},
+    {file = "toolz-0.12.1.tar.gz", hash = "sha256:ecca342664893f177a13dac0e6b41cbd8ac25a358e5f215316d43e2100224f4d"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "tornado"
 version = "6.4.1"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
@@ -2391,5 +2517,5 @@ reference = "tsinghua"
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.10,<3.13"
-content-hash = "d968169104fafb32ec4c9eadb10881c33f9149605a7d79b67ff30958d8d6f7c9"
+python-versions = ">=3.10,<3.12"
+content-hash = "b14a67f07fd31ee1ee26f8282f4660d21d8c0a13aba059020d09273d1f6a3033"
