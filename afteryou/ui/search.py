@@ -302,7 +302,7 @@ def similar_text_search():
             )
 
     # 文本搜索 UI
-    if "embedding_model" in st.session_state and config.enable_embedding:
+    if "emb_model_text" in st.session_state and config.enable_embedding:
         st.session_state.search_content = st.text_input("Search similar journal or describe how it feel/what it is")
 
         do_global_keyword_search()

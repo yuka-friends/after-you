@@ -81,7 +81,7 @@ def main():
         st.session_state.routine_run_after = True
         routine.run_after()
 
-    if "embedding_model" not in st.session_state and config.enable_embedding:
+    if "emb_model_text" not in st.session_state and config.enable_embedding:
         with st.spinner("🔮 loading embedding model, please stand by..."):
             (
                 st.session_state["emb_model_text"],
