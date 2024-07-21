@@ -296,11 +296,13 @@ def similar_text_search():
         with st.spinner("Searching..."):
             # 进行搜索，取回结果
             st.session_state.db_global_search_result = embed_manager.query_text_in_vdb_journal(
-                model=st.session_state.embedding_model, text=st.session_state.search_content
+                model_text=st.session_state["emb_model_text"],
+                processor_text=st.session_state["emb_processor_text"],
+                text=st.session_state.search_content,
             )
 
     # 文本搜索 UI
-    if "embedding_model" in st.session_state and config.enable_embedding:
+    if "emb_model_text" in st.session_state and config.enable_embedding:
         st.session_state.search_content = st.text_input("Search similar journal or describe how it feel/what it is")
 
         do_global_keyword_search()

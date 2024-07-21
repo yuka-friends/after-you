@@ -79,7 +79,8 @@ def add_thought():
             )
             if "embedding_model" in st.session_state and config.enable_embedding:
                 embed_manager.embed_journal_to_vdb(
-                    model=st.session_state.embedding_model,
+                    model_text=st.session_state["emb_model_text"],
+                    processor_text=st.session_state["emb_processor_text"],
                     user_timestamp=datetime_user.timestamp(),
                     user_note=text,
                     ai_reply_content=ai_reply,
