@@ -55,7 +55,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 - Open `start_app.bat` in the directory, the tool will host a web server so you can visit by browser (usually at http://localhost:8501 ,The specific situation may be different, please check the CLI window.);
 
 - You need to fill in the api info provided by the large language model service on the settings page, including base url, api key, and model name. You can find relevant information in the model service provider's backend or help documentation.
-    - Currently accessed through an OpenAI-compatible interface. You can use [OpenAI](https://openai.com/), [Groq](https://console.groq.com/keys) (free for now), [Moonshot](https://platform.moonshot.cn/console/api-keys) (Provide free quota), [LM studio](https://lmstudio.ai/)/[Ollama](https://ollama.com/) (run local LLMs) and any other model service compatible with.
+    - Currently accessed through an OpenAI-compatible interface. You can use [OpenAI](https://openai.com/), [Groq](https://console.groq.com/keys), [Moonshot](https://platform.moonshot.cn/console/api-keys), [deepseek](https://platform.deepseek.com/), [LM studio](https://lmstudio.ai/)/[Ollama](https://ollama.com/) (run local LLMs) etc. and any other model service compatible with.
 
 - After the service is started, devices under the same LAN can also access After you. In this way, you can record and browse on different devices.
     - Responsive layout for mobile is still under development
