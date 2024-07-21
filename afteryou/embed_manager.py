@@ -9,66 +9,55 @@ import os
 import faiss
 import numpy as np
 import pandas as pd
-import torch
-import uform
 from PIL import Image
+from uform import Modality, get_model
 
 from afteryou import file_utils
 from afteryou.config import config
+from afteryou.const import UFORM_MODEL_NAME
 from afteryou.db_manager import db_manager
 from afteryou.logger import get_logger
 from afteryou.sys_path import FILEPATH_VDB_JOURNAL
 
 logger = get_logger(__name__)
 
-is_cuda_available = torch.cuda.is_available()
-device = torch.device("cuda" if is_cuda_available else "cpu")
+
+def get_model_and_processor():
+    # model_text, model_image, processor_text, processor_image = get_model_and_processor()
+    processors, models = get_model(UFORM_MODEL_NAME)
+    model_text = models[Modality.TEXT_ENCODER]
+    model_image = models[Modality.IMAGE_ENCODER]
+    processor_text = processors[Modality.TEXT_ENCODER]
+    processor_image = processors[Modality.IMAGE_ENCODER]
+
+    return model_text, model_image, processor_text, processor_image
 
 
-def get_model(mode="cpu"):
-    """
-    加载模型
-    """
-    model = uform.get_model("unum-cloud/uform-vl-multilingual-v2")
-    if mode == "cpu":
-        logger.info("emb run on cpu.")
-    if mode == "cuda":
-        logger.info("emb run on cuda.")
-        if is_cuda_available:
-            model.to(device=device)
-        else:
-            logger.warning("cude not available, emb run on cpu.")
-
-    return model
-
-
-def embed_img(model: uform.models.VLM, img_filepath, is_cuda_available=is_cuda_available):
+def embed_img(model_image, processor_image, img_filepath):
     """
     将图像转为 embedding vector
     """
     image = Image.open(img_filepath)
-    image_data = model.preprocess_image(image)
-    if is_cuda_available:
-        image_features, image_embedding = model.encode_image(image_data.to(device=device), return_features=True)
-    else:
-        image_features, image_embedding = model.encode_image(image_data, return_features=True)
+    image_data = processor_image(image)
+    image_features, image_embedding = model_image.encode(image_data, return_features=True)
+
     return image_embedding
 
 
-def embed_text(text_query, model, detach_numpy=True):
+def embed_text(model_text, processor_text, text_query, detach_numpy=True):
     """
     将文本转为 embedding vector
-    注意：model 必须运行在 cpu 模式下
 
     :param detach_numpy 是否预处理张量
     """
     # 对文本进行编码
-    text_data = model.preprocess_text(text_query)
-    text_features, text_embedding = model.encode_text(text_data, return_features=True)
+    text_data = processor_text(text_query)
+    text_features, text_embedding = model_text.encode(text_data, return_features=True)
 
     # 预处理张量
     if detach_numpy:
-        text_np = text_embedding.detach().cpu().numpy()
+        # text_np = text_embedding.detach().cpu().numpy()
+        text_np = text_embedding
         text_np = np.float32(text_np)
         faiss.normalize_L2(text_np)
         return text_np
@@ -106,16 +95,13 @@ class VectorDatabase:
         :param vector: 图像 embedding 后的向量
         :param rowid: sqlite 对应的 ROWID
         """
-        vector = vector.detach().cpu().numpy()  # 转换为numpy数组
+        # vector = vector.detach().cpu().numpy()  # 转换为numpy数组
         vector = np.float32(vector)  # 转换为float32类型的numpy数组
         faiss.normalize_L2(vector)  # 规范化向量，避免在搜索时出现错误的结果
 
         if rowid in self.all_ids_list:  # 如果 rowid 已经存在于向量数据库，删除后再更新
             self.index.remove_ids(np.array([rowid]))
         self.index.add_with_ids(vector, np.array([rowid]))  # 踩坑：使用faiss来管理就好，先用list/dict缓存再集中写入的思路会OOM
-
-    def delete_vector(self, rowid: int):
-        self.index.remove_ids(np.array([rowid]))
 
     def search_vector(self, vector, k=20):
         """在数据库中查询最近的k个向量，返回对应 (rowid, 相似度) 列表"""
@@ -137,7 +123,7 @@ def find_closest_iframe_img_dict_item(target: str, img_dict: dict, threshold=3):
     min_difference = float("inf")
 
     for key, value in img_dict.items():
-        difference = abs(int(value.split(".")[0]) - int(target.split(".")[0]))
+        difference = abs(int(value.replace("_cropped", "").split(".")[0]) - int(target.replace("_cropped", "").split(".")[0]))
         if difference <= threshold and difference < min_difference:
             closest_item = value
             min_difference = difference
@@ -164,7 +150,12 @@ def query_vector_in_vdb(vector, vdb_filepath=FILEPATH_VDB_JOURNAL):
 
 
 def embed_journal_to_vdb(
-    model, user_timestamp, user_note, ai_reply_content, vdb=VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL))
+    model_text,
+    processor_text,
+    user_timestamp,
+    user_note,
+    ai_reply_content,
+    vdb=VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL)),
 ):
     """
     流程：将日记片段 embed 到 vdb
@@ -175,7 +166,7 @@ def embed_journal_to_vdb(
         ai_reply_content = ""
 
     text_combine = user_note + "\nreply:" + ai_reply_content
-    text_embedding = embed_text(text_combine, model=model, detach_numpy=False)
+    text_embedding = embed_text(model_text=model_text, processor_text=processor_text, text_query=text_combine)
     rowid = db_manager.query_rowid(timestamp=user_timestamp)
     if rowid:
         vdb.add_vector(vector=text_embedding, rowid=rowid)
@@ -193,17 +184,19 @@ def delete_vdb_journal_record_by_timestamp(timestamp):
     logger.info(f"delete embedding: {rowid=}")
 
 
-def query_text_in_vdb_journal(model, text):
+def query_text_in_vdb_journal(model_text, processor_text, text):
     """
     流程：根据文本在 vdb journal 搜索近似记录
     """
-    text_embedding = embed_text(model=model, text_query=text)
+    text_embedding = embed_text(model_text=model_text, processor_text=processor_text, text_query=text)
     df = query_vector_in_vdb(vector=text_embedding, vdb_filepath=FILEPATH_VDB_JOURNAL)
     logger.info(f"querying: {text=}")
     return df
 
 
-def embed_unembed_journal_to_vdb(model, vdb=VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL))):
+def embed_unembed_journal_to_vdb(
+    model_text, processor_text, vdb=VectorDatabase(vdb_filename=os.path.basename(FILEPATH_VDB_JOURNAL))
+):
     """
     流程：将未 embed 的日记片段 embed 到 vdb
     """
@@ -211,7 +204,8 @@ def embed_unembed_journal_to_vdb(model, vdb=VectorDatabase(vdb_filename=os.path.
     for index, row in db_df.iterrows():
         if row["rowid"] not in vdb.all_ids_list:
             embed_journal_to_vdb(
-                model=model,
+                model_text=model_text,
+                processor_text=processor_text,
                 user_timestamp=row["user_timestamp"],
                 user_note=row["user_note"],
                 ai_reply_content=row["ai_reply_content"],

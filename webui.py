@@ -81,9 +81,14 @@ def main():
         st.session_state.routine_run_after = True
         routine.run_after()
 
-    if "embedding_model" not in st.session_state and config.enable_embedding:
+    if "emb_model_text" not in st.session_state and config.enable_embedding:
         with st.spinner("🔮 loading embedding model, please stand by..."):
-            st.session_state.embedding_model = embed_manager.get_model(mode="cpu")
+            (
+                st.session_state["emb_model_text"],
+                st.session_state["emb_model_image"],
+                st.session_state["emb_processor_text"],
+                st.session_state["emb_processor_image"],
+            ) = embed_manager.get_model_and_processor()
 
             # 将未 embed 的日记片段 embed 到 vdb
             if "embed_not_index_journal_last_datetime_str" not in st.session_state:
@@ -103,7 +108,9 @@ def main():
 
             if embed_not_index_journal_condition:
                 with st.spinner("🔮 Embedding not index journal..."):
-                    embed_manager.embed_unembed_journal_to_vdb(model=st.session_state.embedding_model)
+                    embed_manager.embed_unembed_journal_to_vdb(
+                        model_text=st.session_state["emb_model_text"], processor_text=st.session_state["emb_processor_text"]
+                    )
                     file_utils.get_cache_dict(
                         key_operate="embed_not_index_journal_last_datetime_str",
                         value_operate=utils.datetime_to_str(datetime.datetime.now()),

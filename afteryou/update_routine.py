@@ -5,6 +5,7 @@ import shutil
 from streamlit.file_util import get_streamlit_file_path
 
 from afteryou.config import config
+from afteryou.const import UFORM_MODEL_NAME
 
 WINDOWS_FONT_FILEPATH = "C:/Windows/Fonts/"
 FONT_LIST = [
@@ -65,7 +66,7 @@ def main():
             print("   Checking if the embedded model has been downloaded, if so it will be skipped.")
             from afteryou import embed_manager
 
-            embed_manager.get_model(mode="cpu")
+            embed_manager.get_model(model_name=UFORM_MODEL_NAME)
             print("   Embedding function has been enabled.")
             config.set_and_save_config("enable_embedding", True)
         except Exception as e:
@@ -75,6 +76,8 @@ def main():
             print("")
             print("   Embedding function has been disabled.")
             config.set_and_save_config("enable_embedding", False)
+
+    print("\ninstall done.")
 
 
 main()
