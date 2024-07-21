@@ -21,7 +21,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 - [x] journal static
 - [x] journal emotion static
 - [x] multiple rounds of memory
-- [ ] deployment support on macOS/linux
+- [x] deployment support on macOS/linux
 - [ ] responsive layout for mobile
 - [ ] add imgae vision index
 - [ ] add tag search and summary
@@ -29,6 +29,7 @@ After you 是一款受 [心光](https://apps.apple.com/cn/app/%E5%BF%83%E5%85%89
 - [ ] separate backend
 - [x] embedding unembed note
 - [ ] tts
+- [ ] long term memorize https://github.com/mem0ai/mem0
 
 
 ## 🧡 How to Install
