@@ -28,6 +28,7 @@ def render():
                 "mail_content": st.column_config.TextColumn("content", width="large"),
                 "mail_timestamp": st.column_config.NumberColumn("timestamp", width="small"),
             },
+            height=800,
         )
         st.empty()
     with col_n:
